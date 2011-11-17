@@ -30,12 +30,9 @@ To install the 'stock_quote' ruby gem:
 
 First require the gem and include the class:
 
-`> require "stock_quote"
-
- => true
-
-> include StockQuote
-
+`> require "stock_quote"<br/>
+ => true<br/>
+> include StockQuote<br/>
  => Object`
 
 Then get a current stock quote:
@@ -135,8 +132,8 @@ Values may be accessed off the Stock or Price object like so:
 
 Or:
 
-> stock = StockQuote::Stock.quote("SYMBOL")
-> stock.last
+`stock = StockQuote::Stock.quote("SYMBOL")<br/>
+stock.last`
 
 You can always convert the queries results to json with the following commands:
 
