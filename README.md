@@ -1,21 +1,49 @@
 # stock_quote
 
-A ruby gem that retrieves real-time stock quotes from google.
+A ruby gem that retrieves real-time stock quotes and historical pricing from google.
 
-Retrieve up to 100 stock quotes per query with the following variables - symbol, pretty_symbol, symbol_lookup_url, company, exchange, exchange_timezone, exchange_utc_offset, exchange_closing, divisor, currency, last, high, low, volume, avg_volume, market_cap, open, y_close, change, perc_change, delay, trade_timestamp, trade_date_utc, trade_time_utc, current_date_utc, current_time_utc, symbol_url, chart_url, disclaimer_url, ecn_url, isld_last, isld_trade_date_utc, isld_trade_time_utc, brut_last, brut_trade_date_utc, brut_trade_time_utc and daylight_savings - per stock.
+## Functionality
 
-Uses an undocumented Google API, as referenced here:  http://www.jarloo.com/google-stock-api/
+There are only two functions:  quote and history.
 
-"It’s not very well known and Google has no support or docs for it, but there is an elusive Google Stock API. Like most of Google’s API’s it’s REST based. (I wish all API’s were, as I hate SOAP)
-API Url Formatting. The API from what I can tell is very simple. It only has a single parameter that accepts a stock ticker."
+### Stock.quote("symbol")
+
+Real-time stock quotes are retrieved through an undocumented Google API, as referenced here:  http://www.jarloo.com/google-stock-api/
+
+"It's not very well known and Google has no support or docs for it, but there is an elusive Google Stock API. Like most of Google's API's it's REST based. (I wish all API's were, as I hate SOAP) API Url Formatting. The API from what I can tell is very simple. It only has a single parameter that accepts a stock ticker."
+
+You may retrieve up to 100 stock quotes per query, per stock, within google's daily API limits.
+
+### Stock.history("symbol")
+
+Historical pricing is retrieved through finance.google.com:  http://www.google.com/finance/historical?q=SYMBOL&output=csv
+
+Historical pricing only goes as far back as Google has recorded. You may only retrieve one stock per query, within google's daily API limits.  
 
 ## Installation
 
-To install the stock quote ruby gem:
+To install the 'stock_quote' ruby gem:
 
 `gem install stock_quote`
 
-## Include
+## irb Examples
+
+First require the gem and include the class:
+
+`> require "stock_quote"
+ => true
+> include StockQuote
+ => Object`
+
+Then get a current stock quote:
+
+`> Stock.quote("SYMBOL")`
+
+Or historical pricing:
+
+`> Stock.history("SYMBOL")`
+
+## Rails Examples
 
 To use the gem in your Rails Application, include it:
 
@@ -31,17 +59,19 @@ Include the gem in your Gemfile:
 
 `gem "stock_quote"`
 
-## Instructions
+## Rails Usage
 
-To use the stock_quote gem, you can get a quote with the following syntax:
+### StockQuote::Stock.find("symbol")
 
-`stock = StockQuote::Stock.find("symbol")`
+You can get a current quote with the following syntax:
+
+`stock = StockQuote::Stock.quote("symbol")`
 
 Where symbol equals the company stock symbol you want a quote for. For example, "aapl" for Apple, Inc.
 
-You may search for multiple stocks by seperating symbols with a comma. For example:
+You may search for multiple stocks by separating symbols with a comma. For example:
 
-`stocks = StockQuote::Stock.find("aapl, google")`
+`stocks = StockQuote::Stock.quote("aapl, google")`
 
 These queries will return a Stock object or an array of Stock objects which you may iterate through. Each stock object has the following values:
 
@@ -83,17 +113,35 @@ These queries will return a Stock object or an array of Stock objects which you 
 * brut_trade_time_utc
 * daylight_savings
 
-These values may be accessed off the Stock object like so:
+### StockQuote::Stock.history("symbol")
 
+Historical queries provide an array of Price objects with the following values:
+
+* date
+* open
+* high
+* low
+* close
+* volume
+
+## Values
+
+Values may be accessed off the Stock or Price object like so:
+
+`StockQuote::Stock.quote("SYMBOL").last`
+
+Or:
+
+`stock = StockQuote::Stock.quote("SYMBOL")
 `stock.last`
 
 You can always convert the queries results to json with the following commands:
 
-`stock.to_json`
+`StockQuote::Stock.quote("SYMBOL").to_json`
 
-Or for multiple quote queries:
+Or:
 
-`stocks.to_json`
+`StockQuote::Stock.history("SYMBOL").to_json`
 
 ## Special thanks to
 

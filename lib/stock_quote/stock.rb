@@ -1,7 +1,22 @@
 require "rest-client"
 require "hpricot"
+require "date"
 
 module StockQuote
+
+  class Price
+      attr_accessor :date, :open, :high, :low, :close, :volume
+      def initialize(date,open,high,low,close, volume)
+            date = date.split("-")
+            @date = Time.utc(date[2],date[1],date[0].to_i)
+            @open = open.to_f
+            @high = high.to_f
+            @low = low.to_f
+            @close = close.to_f
+            @volume = volume.to_i
+     end
+  end
+    
   class Stock
       
       attr_accessor :symbol, :pretty_symbol, :symbol_lookup_url, :company, :exchange, :exchange_timezone, :exchange_utc_offset, :exchange_closing, :divisor, :currency, :last, :high, :low, :volume, :avg_volume, :market_cap, :open, :y_close, :change, :perc_change, :delay, :trade_timestamp, :trade_date_utc, :trade_time_utc, :current_date_utc, :current_time_utc, :symbol_url, :chart_url, :disclaimer_url, :ecn_url, :isld_last, :isld_trade_date_utc, :isld_trade_time_utc, :brut_last, :brut_trade_date_utc, :brut_trade_time_utc, :daylight_savings
@@ -15,21 +30,21 @@ module StockQuote
             @exchange = exchange
             @exchange_timezone = exchange_timezone 
             @exchange_utc_offset = exchange_utc_offset
-            @exchange_closing = exchange_closing
-            @divisor = divisor
+            @exchange_closing = exchange_closing.to_i
+            @divisor = divisor.to_i
             @currency = currency
-            @last = last
-            @high = high 
-            @low = low
-            @volume = volume
-            @avg_volume = avg_volume
-            @market_cap = market_cap
-            @open = open
-            @y_close = y_close
-            @change = change
-            @perc_change = perc_change
-            @delay = delay
-            @trade_timestamp = trade_timestamp 
+            @last = last.to_f
+            @high = high.to_f 
+            @low = low.to_f
+            @volume = volume.to_i
+            @avg_volume = avg_volume.to_i
+            @market_cap = market_cap.to_f
+            @open = open.to_f
+            @y_close = y_close.to_f
+            @change = change.to_f
+            @perc_change = perc_change.to_f
+            @delay = delay.to_i
+            @trade_timestamp = trade_timestamp
             @trade_date_utc = trade_date_utc
             @trade_time_utc = trade_time_utc
             @current_date_utc = current_date_utc
@@ -38,7 +53,7 @@ module StockQuote
             @chart_url = chart_url
             @disclaimer_url = disclaimer_url
             @ecn_url = ecn_url
-            @isld_last = isld_last
+            @isld_last = isld_last.to_f
             @isld_trade_date_utc = isld_trade_date_utc
             @isld_trade_time_utc = isld_trade_time_utc
             @brut_last = brut_last
@@ -46,9 +61,8 @@ module StockQuote
             @brut_trade_time_utc = brut_trade_time_utc
             @daylight_savings = daylight_savings
         
-    end  
-      
-    def self.find(symbol)
+    end
+    def self.quote(symbol)
         url = "http://www.google.com/ig/api?"
         query =[]
         symbols = symbol.gsub(" ", "").split(",")
@@ -111,6 +125,31 @@ module StockQuote
                 results = stock; 
             else
                 results << stock;
+            end
+        end
+        return results;
+    end
+
+    def self.history(symbol)
+
+        url =  "http://www.google.com/finance/historical?q="+symbol+"&output=csv"
+        RestClient.get(url){ |response, request, result, &block|
+                case response.code
+            when 200
+                self.parse_history(response)
+            else
+                response.return!(request, result, &block)
+            end
+        }
+    end
+    def self.parse_history(response)
+        timeline = response.split("\n")
+        results = []
+        for row in timeline
+            if row[-6,6] != "Volume"
+                row = row.split(",")
+                p=Price.new(row[0],row[1],row[2], row[3], row[4], row[5])
+                results << p;
             end
         end
         return results;
