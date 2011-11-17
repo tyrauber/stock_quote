@@ -135,9 +135,8 @@ Values may be accessed off the Stock or Price object like so:
 
 Or:
 
-`stock = StockQuote::Stock.quote("SYMBOL")
-
-stock.last`
+> stock = StockQuote::Stock.quote("SYMBOL")
+> stock.last
 
 You can always convert the queries results to json with the following commands:
 
