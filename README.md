@@ -32,11 +32,8 @@ First require the gem and include the class:
 
 `> require "stock_quote"`
 
-` => true`
-
 `> include StockQuote`
 
-` => Object`
 
 Then get a current stock quote:
 
