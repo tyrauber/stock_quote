@@ -32,9 +32,6 @@ First require the gem and include the class:
 
 `> require "stock_quote"`
 
-`> include StockQuote`
-
-
 Then get a current stock quote:
 
 `> Stock.quote("SYMBOL")`
