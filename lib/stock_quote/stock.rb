@@ -1,3 +1,4 @@
+require "rubygems"
 require "rest-client"
 require "hpricot"
 require "date"
