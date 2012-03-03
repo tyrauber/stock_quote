@@ -26,24 +26,7 @@ To install the 'stock_quote' ruby gem:
 
 `gem install stock_quote`
 
-## irb Examples
-
-First require the gem and include the class:
-
-`> require "stock_quote"`
-
-`> include StockQuote`
-
-
-Then get a current stock quote:
-
-`> Stock.quote("SYMBOL")`
-
-Or historical pricing:
-
-`> Stock.history("SYMBOL")`
-
-## Rails Examples
+## Gem Configuration
 
 To use the gem in your Rails Application, include it:
 
@@ -59,7 +42,7 @@ Include the gem in your Gemfile:
 
 `gem "stock_quote"`
 
-## Rails Usage
+## Usage
 
 ### StockQuote::Stock.find("symbol")
 
@@ -146,7 +129,7 @@ Or:
 
 ## Special thanks to
 
-...Google for making this api publically available. I found the Google Finance API to be overly complex for simple stock quote queries.
+...Google for making this api publicly available. I found the Google Finance API to be overly complex for simple stock quote queries.
 
 ## License
 
