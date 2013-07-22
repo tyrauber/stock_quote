@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://www.google.com/ig/api?stock=asdf
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      accept:
+      - ! '*/*; q=0.5, application/xml'
+      accept-encoding:
+      - gzip, deflate
+      user-agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      x-frame-options:
+      - SAMEORIGIN
+      content-type:
+      - text/xml; charset=ISO-8859-1
+      date:
+      - Sun, 21 Jul 2013 23:23:01 GMT
+      pragma:
+      - no-cache
+      expires:
+      - Fri, 01 Jan 1990 00:00:00 GMT
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      set-cookie:
+      - PREF=ID=769d45ecad79bb88:TM=1374448981:LM=1374448981:S=WjsFY3z2-OYbYJwb; expires=Tue,
+        21-Jul-2015 23:23:01 GMT; path=/; domain=.google.com
+      x-content-type-options:
+      - nosniff
+      server:
+      - igfe
+      x-xss-protection:
+      - 1; mode=block
+      transfer-encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0"?><xml_api_reply version="1"><finance module_id="0"
+        tab_id="0" mobile_row="0" mobile_zipped="1"><symbol data="ASDF"/><pretty_symbol
+        data="ASDF"/><symbol_lookup_url data="/finance?client=ig&amp;q=ASDF"/><no_data_message
+        data="No data found"/></finance></xml_api_reply>
+    http_version: '1.1'
+  recorded_at: Sun, 21 Jul 2013 23:28:01 GMT
+recorded_with: VCR 2.5.0

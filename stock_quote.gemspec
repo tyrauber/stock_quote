@@ -21,4 +21,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_runtime_dependency "rest-client"
   s.add_runtime_dependency "hpricot"
+  s.add_development_dependency 'fakeweb'
+  s.add_development_dependency 'vcr'
 end

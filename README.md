@@ -44,7 +44,7 @@ Include the gem in your Gemfile:
 
 ## Usage
 
-### StockQuote::Stock.find("symbol")
+### StockQuote::Stock.quote("symbol")
 
 You can get a current quote with the following syntax:
 
@@ -126,6 +126,28 @@ You can always convert the queries results to json with the following commands:
 Or:
 
 `StockQuote::Stock.history("SYMBOL").to_json`
+
+
+## Response Codes
+
+Stock instances now include a response_code: 200 and 404.
+
+    > @stock = StockQuote::Stock.quote('aapl')
+    > @stock.response_code
+      => 200
+
+Additionally, stock instances now have a success? and failure? method.
+
+    > @stock.success?
+      => true
+
+In the event that a stock symbol is incorrect, the returned instance will provide a response code of 404 and respond in the affirmative to a failure? method call.
+
+    > @stock = StockQuote::Stock.quote('asdf')
+    > @stock.response_code
+      => 404
+    > @stock.failure?
+      => true
 
 ## Special thanks to
 
