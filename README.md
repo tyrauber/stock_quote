@@ -2,6 +2,12 @@
 
 A ruby gem that retrieves real-time stock quotes and historical pricing from google.
 
+# DISCONTINUED
+
+On November 1, 2013, Google discontinued iGoogle, the api which stock_quote utilized, rendering the gem inoperable.
+
+All google things must come to an end. This is no exception.
+
 ## Functionality
 
 There are only two functions:  quote and history.
