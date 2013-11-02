@@ -1,30 +1,12 @@
 # stock_quote
 
-A ruby gem that retrieves real-time stock quotes and historical pricing from google.
+A ruby gem that retrieves real-time stock quotes and historical pricing from ~~google~~ yahoo.
 
-# DISCONTINUED
+# Update
 
-On November 1, 2013, Google discontinued iGoogle, the api which stock_quote utilized, rendering the gem inoperable.
+On November 1, 2013, Google discontinued iGoogle, which contained the api endpoint stock_quote utilized, rendering the gem inoperable.
 
-All google things must come to an end. This is no exception.
-
-## Functionality
-
-There are only two functions:  quote and history.
-
-### Stock.quote("symbol")
-
-Real-time stock quotes are retrieved through an undocumented Google API, as referenced here:  http://www.jarloo.com/google-stock-api/
-
-"It's not very well known and Google has no support or docs for it, but there is an elusive Google Stock API. Like most of Google's API's it's REST based. (I wish all API's were, as I hate SOAP) API Url Formatting. The API from what I can tell is very simple. It only has a single parameter that accepts a stock ticker."
-
-You may retrieve up to 100 stock quotes per query, per stock, within google's daily API limits.
-
-### Stock.history("symbol")
-
-Historical pricing is retrieved through finance.google.com:  http://www.google.com/finance/historical?q=SYMBOL&output=csv
-
-Historical pricing only goes as far back as Google has recorded. You may only retrieve one stock per query, within google's daily API limits.  
+As of November 2nd, 2013, the stock_quote gem has been rebuilt to use the Yahoo finance api, starting with version 1.1.0.  All applications leveraging this gem should update to 1.1.0 to resume operation. The gem methods are the same, but responses have been modified to leverage the new api.  Documentation has been updated to reflect these changes.
 
 ## Installation
 
@@ -60,52 +42,105 @@ Where symbol equals the company stock symbol you want a quote for. For example, 
 
 You may search for multiple stocks by separating symbols with a comma. For example:
 
-`stocks = StockQuote::Stock.quote("aapl, google")`
+`stocks = StockQuote::Stock.quote("aapl,tsla")`
+
+Or as an array.
+
+`stocks = StockQuote::Stock.quote(["aapl", "tsla"])`
 
 These queries will return a Stock object or an array of Stock objects which you may iterate through. Each stock object has the following values:
 
 * symbol
-* pretty_symbol
-* symbol_lookup_url
-* company
-* exchange
-* exchange_timezone
-* exchange_utc_offset
-* exchange_closing
-* divisor
-* currency
-* last
-* high
-* low
-* volume
-* avg_volume
-* market_cap
-* open
-* y_close
+* ask
+* average_daily_volume
+* bid
+* ask_realtime
+* bid_realtime
+* book_value
+* change_percent_change
 * change
-* perc_change
-* delay
-* trade_timestamp
-* trade_date_utc
-* trade_time_utc
-* current_date_utc
-* current_time_utc
-* symbol_url
-* chart_url
-* disclaimer_url
-* ecn_url
-* isld_last
-* isld_trade_date_utc
-* isld_trade_time_utc
-* brut_last
-* brut_trade_date_utc
-* brut_trade_time_utc
-* daylight_savings
+* commission
+* change_realtime
+* after_hours_change_realtime
+* dividend_share
+* last_trade_date
+* trade_date
+* earnings_share
+* eps_estimate_current_year
+* eps_estimate_next_year
+* eps_estimate_next_quarter
+* days_low
+* days_high
+* year_low
+* year_high
+* holdings_gain_percent
+* annualized_gain
+* holdings_gain
+* holdings_gain_percent_realtime
+* holdings_gain_realtime
+* more_info
+* order_book_realtime
+* market_capitalization
+* market_cap_realtime
+* ebitda
+* change_from_year_low
+* percent_change_from_year_low
+* last_trade_realtime_with_time
+* change_percent_realtime
+* change_from_year_high
+* percebt_change_from_year_high
+* last_trade_with_time
+* last_trade_price_only
+* high_limit
+* low_limit
+* days_range
+* days_range_realtime
+* fiftyday_moving_average
+* two_hundredday_moving_average
+* change_from_two_hundredday_moving_average
+* percent_change_from_two_hundredday_moving_average
+* change_from_fiftyday_moving_average
+* percent_change_from_fiftyday_moving_average
+* name
+* notes
+* open
+* previous_close
+* price_paid
+* changein_percent
+* price_sales
+* price_book
+* ex_dividend_date
+* pe_ratio
+* dividend_pay_date
+* pe_ratio_realtime
+* peg_ratio
+* price_eps_estimate_current_year
+* price_eps_estimate_next_year
+* symbol
+* shares_owned
+* short_ratio
+* last_trade_time
+* ticker_trend
+* oneyr_target_price
+* volume
+* holdings_value
+* holdings_value_realtime
+* year_range
+* days_value_change
+* days_value_change_realtime
+* stock_exchange
+* dividend_yield
+* percent_change",
 
-### StockQuote::Stock.history("symbol")
+### StockQuote::Stock.history(symbol, start_date, end_date)
+
+StockQuote::Stock.history(symbol, start_date, end_date) is as alias to StockQuote::Stock.quote(symbol, start_date, end_date).
+
+If you pass quote a start_date and end_date it will do a historical query within the date range as opposed to a realtime quote.  Only one stock symbol should be used for historical quotes.
 
 Historical queries provide an array of Price objects with the following values:
 
+* symbol
 * date
 * open
 * high
@@ -157,7 +192,7 @@ In the event that a stock symbol is incorrect, the returned instance will provid
 
 ## Special thanks to
 
-...Google for making this api publicly available. I found the Google Finance API to be overly complex for simple stock quote queries.
+...~~Google~~ Yahoo for making this api publicly available.
 
 ## License
 

@@ -1,44 +1,34 @@
 require "rubygems"
 require "rest-client"
-require "hpricot"
+require "json"
 require "date"
 
 module StockQuote
 
-  class Price
-    attr_accessor :date, :open, :high, :low, :close, :volume
-
-    def initialize(date,open,high,low,close, volume)
-      date = date.split("-")
-      @date = Time.utc(date[2],date[1],date[0].to_i)
-      @open = open.to_f
-      @high = high.to_f
-      @low = low.to_f
-      @close = close.to_f
-      @volume = volume.to_i
-    end
-  end
-    
   class Stock
 
-    @@fields = ['symbol', 'pretty_symbol', 'symbol_lookup_url', 'company', 'exchange', 'exchange_timezone', 'exchange_utc_offset', 'exchange_closing', 'divisor', 'currency', 'last', 'high', 'low', 'volume', 'avg_volume', 'market_cap', 'open', 'y_close', 'change', 'perc_change', 'delay', 'trade_timestamp', 'trade_date_utc', 'trade_time_utc', 'current_date_utc', 'current_time_utc', 'symbol_url', 'chart_url', 'disclaimer_url', 'ecn_url', 'isld_last', 'isld_trade_date_utc', 'isld_trade_time_utc', 'brut_last', 'brut_trade_date_utc', 'brut_trade_time_utc', 'daylight_savings']
+    @@fields = ["symbol", "Ask","AverageDailyVolume", "Bid", "AskRealtime", "BidRealtime", "BookValue", "Change_PercentChange","Change", "Commission", "ChangeRealtime", "AfterHoursChangeRealtime", "DividendShare","LastTradeDate","TradeDate", "EarningsShare", "ErrorIndicationreturnedforsymbolchangedinvalid", "EPSEstimateCurrentYear", "EPSEstimateNextYear", "EPSEstimateNextQuarter", "DaysLow","DaysHigh","YearLow", "YearHigh", "HoldingsGainPercent", "AnnualizedGain","HoldingsGain", "HoldingsGainPercentRealtime", "HoldingsGainRealtime", "MoreInfo", "OrderBookRealtime", "MarketCapitalization", "MarketCapRealtime", "EBITDA", "ChangeFromYearLow", "PercentChangeFromYearLow", "LastTradeRealtimeWithTime", "ChangePercentRealtime","ChangeFromYearHigh", "PercebtChangeFromYearHigh", "LastTradeWithTime", "LastTradePriceOnly","HighLimit", "LowLimit", "DaysRange", "DaysRangeRealtime", "FiftydayMovingAverage", "TwoHundreddayMovingAverage", "ChangeFromTwoHundreddayMovingAverage", "PercentChangeFromTwoHundreddayMovingAverage", "ChangeFromFiftydayMovingAverage", "PercentChangeFromFiftydayMovingAverage", "Name", "Notes", "Open", "PreviousClose", "PricePaid", "ChangeinPercent","PriceSales","PriceBook", "ExDividendDate", "PERatio", "DividendPayDate", "PERatioRealtime", "PEGRatio", "PriceEPSEstimateCurrentYear", "PriceEPSEstimateNextYear", "Symbol", "SharesOwned", "ShortRatio", "LastTradeTime", "TickerTrend", "OneyrTargetPrice", "Volume", "HoldingsValue", "HoldingsValueRealtime", "YearRange","DaysValueChange","DaysValueChangeRealtime", "StockExchange","DividendYield","PercentChange", "ErrorIndicationreturnedforsymbolchangedinvalid"]
     attr_accessor :response_code, :no_data_message
 
     @@fields.each do | field|
-      self.__send__(:attr_accessor, field.to_sym)
+      self.__send__(:attr_accessor, field.underscore.to_sym)
+    end
+
+    def self.fields
+      @@fields
     end
 
     def initialize(data)
-      @response_code = 200
-      @@fields.each do |field|
-        atts = data.search(field.to_sym)
-        if !atts.empty?
-          value = atts.first.attributes['data']
-          value = value.to_f == 0.0 ? value : value.to_f
-          instance_variable_set("@#{field}", value)
-        else
-          @no_data_message = data.search(:no_data_message).first.attributes['data']
-          @response_code = 404
+      if data['ErrorIndicationreturnedforsymbolchangedinvalid']
+        @no_data_message = data['ErrorIndicationreturnedforsymbolchangedinvalid']
+        @response_code = 404
+      elsif data['count'] && data['count'] == 0
+        @no_data_message = "Query returns no valid data"
+        @response_code = 404
+      else
+        @response_code = 200
+        data.map do |k,v|
+          instance_variable_set("@#{k.underscore}", (v.nil? ? nil : v.to_fs))
         end
       end
     end
@@ -51,44 +41,37 @@ module StockQuote
       response_code==404
     end
 
-    def self.quote(symbol)
-      url = "http://www.google.com/ig/api?"
-      query = symbol.gsub(" ", "").split(",").map{|s| "stock="+s}
-      response = RestClient.get(url+query.join("&"))
-      self.parse(response)
+    def self.quote(symbol, start_date=nil, end_date=nil)
+      url = 'http://query.yahooapis.com/v1/public/yql?q=';
+      if start_date && end_date
+        url = url+URI::encode("select * from yahoo.finance.historicaldata where symbol in (#{symbol.to_p}) and startDate = '#{start_date}' and endDate = '#{end_date}'")
+      else
+        url = url+URI::encode("select * from yahoo.finance.quotes where symbol in (#{symbol.to_p})")
+      end
+      url = url+"&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json"
+      response = RestClient.get(url)
+      self.parse(response, symbol)
     end
 
-    def self.parse(xml)
-      doc = Hpricot::XML(xml)
-      data = doc.search(:finance)
+    def self.parse(json, symbol)
       results = []
+      json = JSON.parse(json)
+      count = json["query"]["count"]
+      return Stock.new(json["query"]) if count == 0
+      data = json["query"]["results"]["quote"]
+      data = count == 1 ? [data] : data
+
       for d in data
+        d["symbol"] = symbol.to_p unless d["symbol"]
         stock = Stock.new(d)
-        return stock if data.count ==1
+        return stock if count == 1
         results << stock
       end
       return results
     end
 
-    def self.history(symbol)
-      url =  "http://www.google.com/finance/historical?q="+symbol+"&output=csv"
-      response = RestClient.get(url) rescue []
-      return response if response.empty?
-      self.parse_history(response)
-    end
-
-    def self.parse_history(response)
-      timeline = response.split("\n")
-      results = []
-      for row in timeline
-        if row[-6,6] != "Volume"
-          row = row.split(",")
-          p=Price.new(row[0],row[1],row[2], row[3], row[4], row[5])
-          results << p
-        end
-      end
-      return results
+    def self.history(symbol, start_date='2012-01-01', end_date='2013-01-08')
+      self.quote(symbol, start_date, end_date)
     end
   end
 end
-
