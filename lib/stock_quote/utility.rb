@@ -20,4 +20,7 @@ class Array
   def to_p
     "'#{self.join("','").gsub(" ", "").upcase}'"
   end
+  def success?
+    !!(!self.empty? && self.first.respond_to?(:success?) && self.first.success?)
+  end
 end
