@@ -1,14 +1,14 @@
-require "stock_quote"
-require "spec_helper"
+require 'stock_quote'
+require 'spec_helper'
 
 describe StockQuote::Stock do
-  describe "quote" do
-    context "success" do
-      describe "single symbol" do
+  describe 'quote' do
+    context 'success' do
+      describe 'single symbol' do
 
         @fields = StockQuote::Stock.class_variable_get(:@@fields)
 
-        use_vcr_cassette "aapl"
+        use_vcr_cassette 'aapl'
 
         @fields.each do | field |
           it ".#{field}" do
@@ -17,7 +17,7 @@ describe StockQuote::Stock do
           end
         end
 
-        it "should result in a successful query with " do
+        it 'should result in a successful query with ' do
           @stock = StockQuote::Stock.quote('aapl')
           @stock.should be_success
           @stock.response_code.should be_eql(200)
@@ -27,11 +27,11 @@ describe StockQuote::Stock do
       end
     end
 
-    describe "comma seperated symbols" do
+    describe 'comma seperated symbols' do
 
-      use_vcr_cassette "aapl,tsla"
+      use_vcr_cassette 'aapl,tsla'
 
-      it "should result in a successful query" do
+      it 'should result in a successful query' do
         @stocks = StockQuote::Stock.quote('aapl,tsla')
         @stocks.each do |stock|
           stock.should be_success
@@ -42,13 +42,13 @@ describe StockQuote::Stock do
       end
     end
 
-    context "failure" do
+    context 'failure' do
 
       @fields = StockQuote::Stock.class_variable_get(:@@fields)
 
-      use_vcr_cassette "asdf"
+      use_vcr_cassette 'asdf'
 
-      it "should fail... gracefully" do
+      it 'should fail... gracefully' do
         @stock = StockQuote::Stock.quote('asdf')
         @stock.should be_failure
         @stock.response_code.should be_eql(404)
@@ -58,19 +58,19 @@ describe StockQuote::Stock do
     end
   end
 
-  describe "history" do
-    context "success" do
-      use_vcr_cassette "aapl_history"
+  describe 'history' do
+    context 'success' do
+      use_vcr_cassette 'aapl_history'
 
-      it "should result in a successful query" do
+      it 'should result in a successful query' do
         @stock = StockQuote::Stock.history('aapl')
-        @stock.count.should >=1
+        @stock.count.should >= 1
       end
     end
-    context "failure" do
-      use_vcr_cassette "asdf_history"
+    context 'failure' do
+      use_vcr_cassette 'asdf_history'
 
-      it "should result in a successful query" do
+      it 'should result in a successful query' do
         @stock = StockQuote::Stock.history('asdf')
         @stock.response_code.should be_eql(404)
         @stock.should respond_to(:no_data_message)
