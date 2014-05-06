@@ -6,7 +6,7 @@ describe StockQuote::Stock do
     context 'success' do
       describe 'single symbol' do
 
-        @fields = StockQuote::Stock.class_variable_get(:@@fields)
+        @fields = StockQuote::Stock::FIELDS
 
         use_vcr_cassette 'aapl'
 
@@ -44,7 +44,7 @@ describe StockQuote::Stock do
 
     context 'failure' do
 
-      @fields = StockQuote::Stock.class_variable_get(:@@fields)
+      @fields = StockQuote::Stock::FIELDS
 
       use_vcr_cassette 'asdf'
 
