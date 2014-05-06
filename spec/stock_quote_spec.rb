@@ -63,7 +63,7 @@ describe StockQuote::Stock do
       use_vcr_cassette 'aapl_history'
 
       it 'should result in a successful query' do
-        @stock = StockQuote::Stock.history('aapl')
+        @stock = StockQuote::Stock.history('aapl', Date.today - 20)
         @stock.count.should >= 1
       end
     end

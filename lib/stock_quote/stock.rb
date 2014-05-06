@@ -2,7 +2,6 @@ require 'rubygems'
 require 'rest-client'
 require 'json'
 require 'date'
-require 'debugger'
 
 module StockQuote
   class Stock
@@ -72,7 +71,6 @@ module StockQuote
     end
 
     def self.history(symbol, start_date = '2012-01-01', end_date = Date.today)
-      debugger
       quote(symbol, Date(start_date), Date(end_date))
     end
   end
