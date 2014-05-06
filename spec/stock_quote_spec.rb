@@ -67,6 +67,7 @@ describe StockQuote::Stock do
         @stock.count.should >= 1
       end
     end
+
     context 'failure' do
       use_vcr_cassette 'asdf_history'
 

@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rest-client'
 require 'json'
 require 'date'
+require 'debugger'
 
 module StockQuote
   class Stock
@@ -41,27 +42,13 @@ module StockQuote
     end
 
     def self.quote(symbol, start_date = nil, end_date = nil)
-      url = 'http://query.yahooapis.com/v1/public/yql?q='
-
+      url = 'https://query.yahooapis.com/v1/public/yql?q='
       if start_date && end_date
-        url += URI.encode(<<-YQL)
-          SELECT
-            *
-          FROM
-            yahoo.finance.historicaldata
-          WHERE
-            symbol
-          IN
-            (#{symbol.to_p})
-          AND
-            startDate = '#{start_date}'
-          AND
-            endDate = '#{end_date}'
-        YQL
+        url += URI.encode("SELECT * FROM yahoo.finance.historicaldata WHERE symbol IN (#{symbol.to_p}) AND startDate = '#{start_date}' AND endDate = '#{end_date}'")
       else
-        url += URI.encode("select * from yahoo.finance.quotes where symbol in (#{symbol.to_p})")
+        url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{symbol.to_p})")
       end
-      url += '&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json'
+      url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
       response = RestClient.get(url)
       parse(response, symbol)
     end
@@ -80,11 +67,13 @@ module StockQuote
         return stock if count == 1
         results << stock
       end
+
       results
     end
 
-    def self.history(symbol, start_date = '2012-01-01', end_date = '2013-01-08')
-      quote(symbol, start_date, end_date)
+    def self.history(symbol, start_date = '2012-01-01', end_date = Date.today)
+      debugger
+      quote(symbol, Date(start_date), Date(end_date))
     end
   end
 end

@@ -1,4 +1,20 @@
 require 'date'
+
+class Array
+  def to_p
+    "'#{join("','").gsub(" ", "").upcase}'"
+  end
+
+  def success?
+    !!(!self.empty? && first.respond_to?(:success?) && first.success?)
+  end
+end
+
+def Date(arg)
+  return arg if arg.is_a?(Date)
+  Date.parse(arg) if arg.is_a?(String)
+end
+
 class String
   def underscore
     gsub(/::/, '/').
@@ -24,14 +40,5 @@ class String
     else
       self
     end
-  end
-end
-class Array
-  def to_p
-    "'#{join("','").gsub(" ", "").upcase}'"
-  end
-
-  def success?
-    !!(!self.empty? && first.respond_to?(:success?) && first.success?)
   end
 end
