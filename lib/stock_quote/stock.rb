@@ -44,7 +44,7 @@ module StockQuote
       url = 'http://query.yahooapis.com/v1/public/yql?q='
 
       if start_date && end_date
-        url = url + URI.encode(<<-YQL)
+        url += URI.encode(<<-YQL)
           SELECT
             *
           FROM
@@ -59,9 +59,9 @@ module StockQuote
             endDate = '#{end_date}'
         YQL
       else
-        url = url + URI.encode("select * from yahoo.finance.quotes where symbol in (#{symbol.to_p})")
+        url += URI.encode("select * from yahoo.finance.quotes where symbol in (#{symbol.to_p})")
       end
-      url = url + '&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json'
+      url += '&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json'
       response = RestClient.get(url)
       parse(response, symbol)
     end
@@ -74,7 +74,7 @@ module StockQuote
       data = json['query']['results']['quote']
       data = count == 1 ? [data] : data
 
-      for d in data
+      data.each do |d|
         d['symbol'] = symbol.to_p unless d['symbol']
         stock = Stock.new(d)
         return stock if count == 1
