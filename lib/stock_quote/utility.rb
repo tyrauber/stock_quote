@@ -1,5 +1,5 @@
 require 'date'
-
+# => Utility Array Methods
 class Array
   def to_p
     "'#{join("','").gsub(" ", "").upcase}'"
@@ -9,18 +9,18 @@ class Array
     !!(!self.empty? && first.respond_to?(:success?) && first.success?)
   end
 end
-
+# => Utility Date Methods
 def Date(arg)
   return arg if arg.is_a?(Date)
   Date.parse(arg) if arg.is_a?(String)
 end
-
+# => Utility String Methods
 class String
   def underscore
-    gsub(/::/, '/').
-    gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
-    gsub(/([a-z\d])([A-Z])/, '\1_\2').
-    tr('-', '_').
+    gsub(/::/, '/')
+    gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+    gsub(/([a-z\d])([A-Z])/, '\1_\2')
+    tr('-', '_')
     downcase
   end
 

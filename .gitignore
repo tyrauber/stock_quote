@@ -2,5 +2,5 @@
 .bundle
 Gemfile.lock
 pkg/*
-spec/vcr_cassettes/*.yml
+spec/support/vcr_cassettes/*.yml
 .DS_Store
