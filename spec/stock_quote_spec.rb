@@ -10,7 +10,7 @@ describe StockQuote::Stock do
 
         use_vcr_cassette 'aapl'
 
-        @fields.each do | field |
+        @fields.each do |field|
           it ".#{field}" do
             @stock = StockQuote::Stock.quote('aapl')
             @stock.should respond_to(field.underscore.to_sym)
@@ -66,16 +66,27 @@ describe StockQuote::Stock do
         @stock = StockQuote::Stock.history('aapl', Date.today - 20)
         @stock.count.should >= 1
       end
+
+      it 'succesfuly queries history by default (no start date given' do
+        @stock = StockQuote::Stock.history('aapl')
+        expect(@stock.count).to be >= 1
+      end
     end
 
     context 'failure' do
       use_vcr_cassette 'asdf_history'
 
       it 'should result in a successful query' do
-        @stock = StockQuote::Stock.history('asdf')
-        @stock.response_code.should be_eql(404)
-        @stock.should respond_to(:no_data_message)
-        @stock.no_data_message.should_not be_nil
+        stock = StockQuote::Stock.history('asdf')
+        expect(stock.response_code).to eq(404)
+        expect(stock).to respond_to(:no_data_message)
+        expect(stock.no_data_message).not_to be_nil
+      end
+
+      it 'should raise ArgumentError if start date is after end date' do
+        expect do
+          StockQuote::Stock.history('aapl', Date.today + 2, Date.today)
+        end.to raise_error(ArgumentError)
       end
     end
   end

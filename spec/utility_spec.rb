@@ -16,3 +16,13 @@ describe 'Date() kernel function' do
     end.to raise_error
   end
 end
+
+describe Date do
+  describe '::min' do
+    it 'returns the minimum of two dates passed' do
+      expect(Date.min(Date.parse('2000-01-01'), Date.parse('2012-01-01')))
+        .to eq(Date.parse('2000-01-01'))
+    end
+  end
+end
+
