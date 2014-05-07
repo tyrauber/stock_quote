@@ -14,6 +14,13 @@ def Date(arg)
   return arg if arg.is_a?(Date)
   Date.parse(arg) if arg.is_a?(String)
 end
+
+class Date
+  def self.min(first, second)
+    first < second ? first : second
+  end
+end
+
 # => Utility String Methods
 class String
   def underscore

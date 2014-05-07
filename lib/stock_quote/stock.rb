@@ -4,6 +4,24 @@ require 'json'
 require 'date'
 
 module StockQuote
+  # => SecQuote::NoDataForStockError
+  # Is returned for 404s and ErrorIndicationreturnedforsymbolchangedinvalid
+  class NoDataForStockError < StandardError
+    attr_reader :no_data_message
+    def initialize(data, *)
+      if data['ErrorIndicationreturnedforsymbolchangedinvalid']
+        @no_data_message = data['ErrorIndicationreturnedforsymbolchangedinvalid']
+      elsif data['diagnostics'] && data['diagnostics']['warning']
+        @no_data_message = data['diagnostics']['warning']
+      elsif data['count'] && data['count'] == 0
+        @no_data_message = 'Query returns no valid data'
+      end
+    end
+    def failure?; true end
+    def success?; false end
+    def response_code; 404 end
+  end
+
   # => SecQuote::Stock
   # Queries Yahoo for current and historical pricing.
   class Stock
@@ -23,6 +41,9 @@ module StockQuote
       if data['ErrorIndicationreturnedforsymbolchangedinvalid']
         @no_data_message = data['ErrorIndicationreturnedforsymbolchangedinvalid']
         @response_code = 404
+      elsif data['diagnostics'] && data['diagnostics']['warning']
+        @no_data_message = data['diagnostics']['warning']
+        @response_code = 404
       elsif data['count'] && data['count'] == 0
         @no_data_message = 'Query returns no valid data'
         @response_code = 404
@@ -35,10 +56,12 @@ module StockQuote
     end
 
     def success?
+      warn "[DEPRECATION] `Stock#success?` is deprecated.  Please use `NoDataForStockError` instead."
       response_code == 200
     end
 
     def failure?
+      warn "[DEPRECATION] `Stock#failure?` is deprecated.  Please use `NoDataForStockError` instead."
       response_code == 404
     end
 
@@ -51,15 +74,16 @@ module StockQuote
       end
       url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
       response = RestClient.get(url)
+
       parse(response, symbol)
     end
 
     def self.parse(json, symbol)
       results = []
-      json = JSON.parse(json)
-      count = json['query']['count']
-      return Stock.new(json['query']) if count == 0
-      data = json['query']['results']['quote']
+      json = JSON.parse(json).fetch('query')
+      count = json['count']
+      raise NoDataForStockError.new(json) if count == 0
+      data = json['results']['quote']
       data = count == 1 ? [data] : data
 
       data.each do |d|
@@ -73,7 +97,18 @@ module StockQuote
     end
 
     def self.history(symbol, start_date = '2012-01-01', end_date = Date.today)
-      quote(symbol, Date(start_date), Date(end_date))
+      start, finish = Date(start_date), Date(end_date)
+      raise ArgumentError.new('start dt after end dt') if start > finish
+
+      quotes = []
+      begin
+        quotes += quote(symbol, start, Date.min(finish, start + 365))
+        start += 365
+      end until finish - start < 365
+      quotes
+
+    rescue NoDataForStockError => e
+      return e
     end
   end
 end
