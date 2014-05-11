@@ -13,13 +13,12 @@ describe StockQuote::Stock do
         @fields.each do |field|
           it ".#{field}" do
             @stock = StockQuote::Stock.quote('aapl')
-            @stock.should respond_to(field.underscore.to_sym)
+            @stock.should respond_to(to_underscore(field).to_sym)
           end
         end
 
         it 'should result in a successful query with ' do
           @stock = StockQuote::Stock.quote('aapl')
-          @stock.should be_success
           @stock.response_code.should be_eql(200)
           @stock.should respond_to(:no_data_message)
           @stock.no_data_message.should be_nil
@@ -34,7 +33,6 @@ describe StockQuote::Stock do
       it 'should result in a successful query' do
         @stocks = StockQuote::Stock.quote('aapl,tsla')
         @stocks.each do |stock|
-          stock.should be_success
           stock.response_code.should be_eql(200)
           stock.should respond_to(:no_data_message)
           stock.no_data_message.should be_nil
@@ -50,7 +48,6 @@ describe StockQuote::Stock do
 
       it 'should fail... gracefully' do
         @stock = StockQuote::Stock.quote('asdf')
-        @stock.should be_failure
         @stock.response_code.should be_eql(404)
         @stock.should respond_to(:no_data_message)
         @stock.no_data_message.should_not be_nil
@@ -76,7 +73,7 @@ describe StockQuote::Stock do
     context 'failure' do
       use_vcr_cassette 'asdf_history'
 
-      it 'should result in a successful query' do
+      it 'should not result in a successful query' do
         stock = StockQuote::Stock.history('asdf')
         expect(stock.response_code).to eq(404)
         expect(stock).to respond_to(:no_data_message)
@@ -85,7 +82,7 @@ describe StockQuote::Stock do
 
       it 'should raise ArgumentError if start date is after end date' do
         expect do
-          StockQuote::Stock.history('aapl', Date.today + 2, Date.today)
+          s = StockQuote::Stock.history('aapl', Date.today + 2, Date.today)
         end.to raise_error(ArgumentError)
       end
     end

@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rest-client'
 require 'json'
 require 'date'
+include StockQuote::Utility
 
 module StockQuote
   # => SecQuote::NoDataForStockError
@@ -30,7 +31,7 @@ module StockQuote
     attr_accessor :response_code, :no_data_message
 
     FIELDS.each do |field|
-      __send__(:attr_accessor, field.underscore.to_sym)
+      __send__(:attr_accessor, to_underscore(field).to_sym)
     end
 
     def self.fields
@@ -50,7 +51,7 @@ module StockQuote
       else
         @response_code = 200
         data.map do |k, v|
-          instance_variable_set("@#{k.underscore}", (v.nil? ? nil : v.to_date.to_fs))
+          instance_variable_set("@#{to_underscore(k)}", (v.nil? ? nil : to_format(v)))
         end
       end
     end
@@ -68,9 +69,9 @@ module StockQuote
     def self.quote(symbol, start_date = nil, end_date = nil)
       url = 'https://query.yahooapis.com/v1/public/yql?q='
       if start_date && end_date
-        url += URI.encode("SELECT * FROM yahoo.finance.historicaldata WHERE symbol IN (#{symbol.to_p}) AND startDate = '#{start_date}' AND endDate = '#{end_date}'")
+        url += URI.encode("SELECT * FROM yahoo.finance.historicaldata WHERE symbol IN (#{to_p(symbol)}) AND startDate = '#{start_date}' AND endDate = '#{end_date}'")
       else
-        url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{symbol.to_p})")
+        url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{to_p(symbol)})")
       end
       url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
       response = RestClient.get(url)
@@ -87,7 +88,7 @@ module StockQuote
       data = count == 1 ? [data] : data
 
       data.each do |d|
-        d['symbol'] = symbol.to_p unless d['symbol']
+        d['symbol'] = to_p(symbol) unless d['symbol']
         stock = Stock.new(d)
         return stock if count == 1
         results << stock
@@ -97,12 +98,12 @@ module StockQuote
     end
 
     def self.history(symbol, start_date = '2012-01-01', end_date = Date.today)
-      start, finish = Date(start_date), Date(end_date)
+      start, finish = to_date(start_date), to_date(end_date)
       raise ArgumentError.new('start dt after end dt') if start > finish
 
       quotes = []
       begin
-        quotes += quote(symbol, start, Date.min(finish, start + 365))
+        quotes += quote(symbol, start, min_date(finish, start + 365))
         start += 365
       end until finish - start < 365
       quotes

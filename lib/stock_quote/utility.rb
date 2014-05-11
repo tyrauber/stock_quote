@@ -1,51 +1,46 @@
 require 'date'
-# => Utility Array Methods
-class Array
-  def to_p
-    "'#{join("','").gsub(" ", "").upcase}'"
-  end
+module StockQuote
+  # => StockQuote Uility Methods
+  module Utility
 
-  def success?
-    !!(!self.empty? && first.respond_to?(:success?) && first.success?)
-  end
-end
-# => Utility Date Methods
-def Date(arg)
-  return arg if arg.is_a?(Date)
-  Date.parse(arg) if arg.is_a?(String)
-end
+    def min_date(first, second)
+      first < second ? first : second
+    end
 
-class Date
-  def self.min(first, second)
-    first < second ? first : second
-  end
-end
+    def to_format(string)
+      to_fs(to_date(string))
+    end
 
-# => Utility String Methods
-class String
-  def underscore
-    gsub(/::/, '/')
-    gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-    gsub(/([a-z\d])([A-Z])/, '\1_\2')
-    tr('-', '_')
-    downcase
-  end
+    def to_underscore(string)
+      string.gsub(/::/, '/')
+      string.gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+      string.gsub(/([a-z\d])([A-Z])/, '\1_\2')
+      string.tr('-', '_')
+      string.downcase
+    end
 
-  def to_fs
-    (!!Float(self) rescue false) ? Float(self) : self
-  end
+    def to_fs(string)
+      (!!Float(string) rescue false) ? Float(string) : string
+    end
 
-  def to_p
-    split(',').to_p
-  end
+    def to_p(string)
+      if string.is_a?(String)
+        to_p(string.split(','))
+      elsif string.is_a?(Array)
+        "'#{string.join("','").gsub(" ", "").upcase}'"
+      else
+        string
+      end
+    end
 
-  def to_date
-    if match(/\d{4}-\d{2}-\d{2}/)
-      Date.strptime(self, '%Y-%m-%d').to_s
-    elsif match(/\d{2}\/\d{2}\/\d{4}/)
-      Date.strptime(self, '%m/%d/%Y').to_s
-    else
-      self
+    def to_date(string)
+      if string.is_a?(String) && string.match(/\d{4}-\d{2}-\d{2}/)
+        Date.strptime(string, '%Y-%m-%d')
+      elsif string.is_a?(String) && string.match(/\d{2}\/\d{2}\/\d{4}/)
+        Date.strptime(string, '%m/%d/%Y')
+      else
+        string
+      end
     end
   end
 end
