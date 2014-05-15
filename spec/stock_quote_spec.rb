@@ -87,4 +87,39 @@ describe StockQuote::Stock do
       end
     end
   end
+
+  describe 'simple_return' do
+    context 'success' do
+      use_vcr_cassette 'aapl_simple_return'
+
+      it 'should result in a successful query' do
+        simple_return = StockQuote::Stock.simple_return(
+          'aapl',
+          Date.parse('2012-01-03'),
+          Date.parse('2012-01-20')
+        )
+        expect(simple_return).to eq(2.205578386790845)
+      end
+    end
+
+    context 'failure' do
+      use_vcr_cassette 'asdf_simple_return'
+
+      it 'should not result in a successful query' do
+        expect do
+          stock = StockQuote::Stock.simple_return(
+            'asdf',
+            Date.parse('2012-01-03'),
+            Date.parse('2012-01-20')
+          )
+        end.to raise_exception
+      end
+
+      it 'should raise ArgumentError if start date is after end date' do
+        expect do
+          s = StockQuote::Stock.simple_return('aapl', Date.today + 2, Date.today)
+        end.to raise_error(ArgumentError)
+      end
+    end
+  end
 end
