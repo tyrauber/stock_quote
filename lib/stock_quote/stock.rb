@@ -66,10 +66,10 @@ module StockQuote
       response_code == 404
     end
 
-    def self.quote(symbol, start_date = nil, end_date = nil)
+    def self.quote(symbol, start_date = nil, end_date = nil, select = "*")
       url = 'https://query.yahooapis.com/v1/public/yql?q='
       if start_date && end_date
-        url += URI.encode("SELECT * FROM yahoo.finance.historicaldata WHERE symbol IN (#{to_p(symbol)}) AND startDate = '#{start_date}' AND endDate = '#{end_date}'")
+        url += URI.encode("SELECT #{ select } FROM yahoo.finance.historicaldata WHERE symbol IN (#{to_p(symbol)}) AND startDate = '#{start_date}' AND endDate = '#{end_date}'")
       else
         url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{to_p(symbol)})")
       end
@@ -77,6 +77,26 @@ module StockQuote
       response = RestClient.get(url)
 
       parse(response, symbol)
+    end
+
+    def self.simple_return(symbol, start_date = Date.parse('2012-01-01'), end_date = Date.today)
+      start, finish = to_date(start_date), to_date(end_date)
+      raise ArgumentError.new('start dt after end dt') if start > finish
+
+      quotes = []
+      begin
+        quotes += quote(
+          symbol,
+          start,
+          min_date(finish, start + 365),
+          "Close"
+        )
+        start += 365
+      end until finish - start < 365
+      quotes
+      sell = quotes.first.close
+      buy = quotes.last.close
+      ((sell - buy) / buy) * 100
     end
 
     def self.parse(json, symbol)
