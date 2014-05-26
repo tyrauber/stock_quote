@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rest-client'
 require 'json'
 require 'date'
+require 'debugger'
 include StockQuote::Utility
 
 module StockQuote
@@ -79,6 +80,19 @@ module StockQuote
       parse(response, symbol)
     end
 
+    def self.quote_min(symbol, start_date = nil, end_date = nil, select = "*")
+      url = 'https://query.yahooapis.com/v1/public/yql?q='
+      if start_date && end_date
+        url += URI.encode("SELECT #{ select } FROM yahoo.finance.historicaldata WHERE symbol IN (#{to_p(symbol)}) AND startDate = '#{start_date}' AND endDate = '#{end_date}'")
+      else
+        url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{to_p(symbol)})")
+      end
+      url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
+      response = RestClient.get(url)
+
+      parse_min(response, symbol)
+    end
+
     def self.simple_return(symbol, start_date = Date.parse('2012-01-01'), end_date = Date.today)
       start, finish = to_date(start_date), to_date(end_date)
       raise ArgumentError.new('start dt after end dt') if start > finish
@@ -104,6 +118,31 @@ module StockQuote
       ((sell - buy) / buy) * 100
     end
 
+    def self.parse_min(json, symbol)
+      results = []
+      json = JSON.parse(json).fetch('query')
+      count = json['count']
+      raise NoDataForStockError.new(json) if count == 0
+      data = json['results']['quote']
+      data = count == 1 ? [data] : data
+      p data
+      data.each do |d|
+        d['symbol'] = to_p(symbol) unless d['symbol']
+        stock = {
+          dt: d['Date'],
+          o: d['Open'],
+          h: d['High'],
+          l: d['Low'],
+          c: d['Close'],
+          v: d['Volume']
+        }
+        return stock if count == 1
+        results << stock
+      end
+
+      results
+    end
+
     def self.parse(json, symbol)
       results = []
       json = JSON.parse(json).fetch('query')
@@ -111,7 +150,6 @@ module StockQuote
       raise NoDataForStockError.new(json) if count == 0
       data = json['results']['quote']
       data = count == 1 ? [data] : data
-
       data.each do |d|
         d['symbol'] = to_p(symbol) unless d['symbol']
         stock = Stock.new(d)
@@ -120,6 +158,18 @@ module StockQuote
       end
 
       results
+    end
+
+    def self.history_min(symbol, start_date = '2012-01-01', end_date = Date.today)
+      start, finish = to_date(start_date), to_date(end_date)
+      raise ArgumentError.new('start dt after end dt') if start > finish
+
+      quotes = []
+      begin
+        quotes += quote_min(symbol, start, min_date(finish, start + 365))
+        start += 365
+      end until finish - start < 365
+      quotes
     end
 
     def self.history(symbol, start_date = '2012-01-01', end_date = Date.today)
