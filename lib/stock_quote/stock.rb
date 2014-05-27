@@ -2,7 +2,6 @@ require 'rubygems'
 require 'rest-client'
 require 'json'
 require 'date'
-require 'debugger'
 include StockQuote::Utility
 
 module StockQuote
