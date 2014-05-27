@@ -130,9 +130,6 @@ module StockQuote
         d['symbol'] = to_p(symbol) unless d['symbol']
         stock = {
           dt: d['Date'],
-          o: d['Open'],
-          h: d['High'],
-          l: d['Low'],
           c: d['Close'],
           v: d['Volume']
         }
