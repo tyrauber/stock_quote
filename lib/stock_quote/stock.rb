@@ -26,7 +26,7 @@ module StockQuote
   # => SecQuote::Stock
   # Queries Yahoo for current and historical pricing.
   class Stock
-    FIELDS = %w(symbol Ask AverageDailyVolume Bid AskRealtime BidRealtime BookValue Change_PercentChange Change Commission ChangeRealtime AfterHoursChangeRealtime DividendShare LastTradeDate TradeDate EarningsShare ErrorIndicationreturnedforsymbolchangedinvalid EPSEstimateCurrentYear EPSEstimateNextYear EPSEstimateNextQuarter DaysLow DaysHigh YearLow YearHigh HoldingsGainPercent AnnualizedGain HoldingsGain HoldingsGainPercentRealtime HoldingsGainRealtime MoreInfo OrderBookRealtime MarketCapitalization MarketCapRealtime EBITDA ChangeFromYearLow PercentChangeFromYearLow LastTradeRealtimeWithTime ChangePercentRealtime ChangeFromYearHigh PercebtChangeFromYearHigh LastTradeWithTime LastTradePriceOnly HighLimit LowLimit DaysRange DaysRangeRealtime FiftydayMovingAverage TwoHundreddayMovingAverage ChangeFromTwoHundreddayMovingAverage PercentChangeFromTwoHundreddayMovingAverage ChangeFromFiftydayMovingAverage PercentChangeFromFiftydayMovingAverage Name Notes Open PreviousClose PricePaid ChangeinPercent PriceSales PriceBook ExDividendDate PERatio DividendPayDate PERatioRealtime PEGRatio PriceEPSEstimateCurrentYear PriceEPSEstimateNextYear Symbol SharesOwned ShortRatio LastTradeTime TickerTrend OneyrTargetPrice Volume HoldingsValue HoldingsValueRealtime YearRange DaysValueChange DaysValueChangeRealtime StockExchange DividendYield PercentChange ErrorIndicationreturnedforsymbolchangedinvalid Date Open High Low Close AdjClose)
+    FIELDS = %w(Symbol Ask AverageDailyVolume Bid AskRealtime BidRealtime BookValue Change_PercentChange Change Commission ChangeRealtime AfterHoursChangeRealtime DividendShare LastTradeDate TradeDate EarningsShare ErrorIndicationreturnedforsymbolchangedinvalid EPSEstimateCurrentYear EPSEstimateNextYear EPSEstimateNextQuarter DaysLow DaysHigh YearLow YearHigh HoldingsGainPercent AnnualizedGain HoldingsGain HoldingsGainPercentRealtime HoldingsGainRealtime MoreInfo OrderBookRealtime MarketCapitalization MarketCapRealtime EBITDA ChangeFromYearLow PercentChangeFromYearLow LastTradeRealtimeWithTime ChangePercentRealtime ChangeFromYearHigh PercebtChangeFromYearHigh LastTradeWithTime LastTradePriceOnly HighLimit LowLimit DaysRange DaysRangeRealtime FiftydayMovingAverage TwoHundreddayMovingAverage ChangeFromTwoHundreddayMovingAverage PercentChangeFromTwoHundreddayMovingAverage ChangeFromFiftydayMovingAverage PercentChangeFromFiftydayMovingAverage Name Notes Open PreviousClose PricePaid ChangeinPercent PriceSales PriceBook ExDividendDate PERatio DividendPayDate PERatioRealtime PEGRatio PriceEPSEstimateCurrentYear PriceEPSEstimateNextYear Symbol SharesOwned ShortRatio LastTradeTime TickerTrend OneyrTargetPrice Volume HoldingsValue HoldingsValueRealtime YearRange DaysValueChange DaysValueChangeRealtime StockExchange DividendYield PercentChange ErrorIndicationreturnedforsymbolchangedinvalid Date Open High Low Close AdjClose)
 
     attr_accessor :response_code, :no_data_message
 
@@ -66,17 +66,28 @@ module StockQuote
       response_code == 404
     end
 
-    def self.quote(symbol, start_date = nil, end_date = nil, select = "*")
+    def self.quote(symbol, start_date = nil, end_date = nil, select = '*', format = 'instance')
       url = 'https://query.yahooapis.com/v1/public/yql?q='
+      select = format_select(select)
       if start_date && end_date
         url += URI.encode("SELECT #{ select } FROM yahoo.finance.historicaldata WHERE symbol IN (#{to_p(symbol)}) AND startDate = '#{start_date}' AND endDate = '#{end_date}'")
       else
-        url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{to_p(symbol)})")
+        url += URI.encode("SELECT #{ select } FROM yahoo.finance.quotes WHERE symbol IN (#{to_p(symbol)})")
       end
       url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
       response = RestClient.get(url)
+      parse(response, symbol, format)
+    end
 
-      parse(response, symbol)
+    def self.json_quote(symbol, start_date = nil, end_date = nil, select = '*', format = 'json')
+      quote(symbol, start_date, end_date, select, format)
+    end
+
+    def self.format_select(select)
+      return select if select.is_a?(String) && !!('*'.match(/\*/))
+      select = select.split(",") if select.is_a?(String)
+      select = select.reject{ |e| !(FIELDS.include? e) }
+      return select.length > 0 ? select.join(',') : '*'
     end
 
     def self.simple_return(symbol, start_date = Date.parse('2012-01-01'), end_date = Date.today)
@@ -99,14 +110,15 @@ module StockQuote
       ((sell - buy) / buy) * 100
     end
 
-    def self.parse(json, symbol)
+    def self.parse(json, symbol, format='instance')
       results = []
       json = JSON.parse(json).fetch('query')
       count = json['count']
       raise NoDataForStockError.new(json) if count == 0
+      return json['results'] if !!(format=='json')
+
       data = json['results']['quote']
       data = count == 1 ? [data] : data
-
       data.each do |d|
         d['symbol'] = to_p(symbol) unless d['symbol']
         stock = Stock.new(d)
@@ -117,19 +129,24 @@ module StockQuote
       results
     end
 
-    def self.history(symbol, start_date = '2012-01-01', end_date = Date.today)
+    def self.history(symbol, start_date = '2012-01-01', end_date = Date.today, select = '*', format = 'instance')
       start, finish = to_date(start_date), to_date(end_date)
       raise ArgumentError.new('start dt after end dt') if start > finish
 
       quotes = []
       begin
-        quotes += quote(symbol, start, min_date(finish, start + 365))
+        quote = quote(symbol, start, min_date(finish, start + 365), select, format)
+        quotes += !!(format=='json') ? quote['quote'] : quote
         start += 365
       end until finish - start < 365
-      quotes
+      return !!(format=='json') ? { 'quote' => quotes } : quotes
 
     rescue NoDataForStockError => e
       return e
+    end
+
+    def self.json_history(symbol, start_date = '2012-01-01', end_date = Date.today, select = '*', format = 'json')
+      history(symbol, start_date, end_date, select, format)
     end
   end
 end

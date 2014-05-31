@@ -23,6 +23,22 @@ describe StockQuote::Stock do
           @stock.should respond_to(:no_data_message)
           @stock.no_data_message.should be_nil
         end
+
+        describe "should select specific fields" do
+          it "as string" do
+            @stock = StockQuote::Stock.quote('aapl', nil, nil, 'Symbol,Ask,Bid')
+            @stock.response_code.should be_eql(200)
+            @stock.should respond_to(:no_data_message)
+            @stock.no_data_message.should be_nil
+          end
+
+          it "as array" do
+            @stock = StockQuote::Stock.quote('aapl', nil, nil, ['Symbol','Ask','Bid'])
+            @stock.response_code.should be_eql(200)
+            @stock.should respond_to(:no_data_message)
+            @stock.no_data_message.should be_nil
+          end
+        end
       end
     end
 
@@ -84,6 +100,55 @@ describe StockQuote::Stock do
         expect do
           s = StockQuote::Stock.history('aapl', Date.today + 2, Date.today)
         end.to raise_error(ArgumentError)
+      end
+    end
+  end
+
+  describe 'json' do
+    context 'success' do
+      describe 'single symbol' do
+
+        use_vcr_cassette 'aapl'
+
+        it "it should return json" do
+          @stock = StockQuote::Stock.json_quote('aapl')
+          @stock.is_a?(Hash).should be_true
+          @stock.should include('quote')
+        end
+
+        describe "should select specific fields" do
+          it "as string" do
+            @stock = StockQuote::Stock.json_quote('aapl', nil, nil, 'Symbol,Ask,Bid')
+            @stock.is_a?(Hash).should be_true
+            @stock.should include('quote')
+          end
+
+          it "as array" do
+            @stock = StockQuote::Stock.json_quote('aapl', nil, nil, ['Symbol','Ask','Bid'])
+            @stock.is_a?(Hash).should be_true
+            @stock.should include('quote')
+          end
+        end
+      end
+
+      describe 'comma seperated symbols' do
+
+        use_vcr_cassette 'aapl,tsla'
+
+        it 'should result in a successful query' do
+          @stocks = StockQuote::Stock.json_quote('aapl,tsla')
+          @stocks.is_a?(Hash).should be_true
+          @stocks.should include('quote')
+        end
+      end
+      describe 'history' do
+        use_vcr_cassette 'aapl_history'
+
+        it 'should result in a successful query' do
+          @stock = StockQuote::Stock.json_history('aapl', Date.today - 20)
+          @stock.is_a?(Hash).should be_true
+          @stock.should include('quote')
+        end
       end
     end
   end

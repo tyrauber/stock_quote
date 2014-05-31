@@ -48,125 +48,44 @@ Or as an array.
 
 `stocks = StockQuote::Stock.quote(["aapl", "tsla"])`
 
-These queries will return a Stock object or an array of Stock objects which you may iterate through. Each stock object has the following values:
+These queries will return a Stock object or an array of Stock objects which you may iterate through. 
 
-* symbol
-* ask
-* average_daily_volume
-* bid
-* ask_realtime
-* bid_realtime
-* book_value
-* change_percent_change
-* change
-* commission
-* change_realtime
-* after_hours_change_realtime
-* dividend_share
-* last_trade_date
-* trade_date
-* earnings_share
-* eps_estimate_current_year
-* eps_estimate_next_year
-* eps_estimate_next_quarter
-* days_low
-* days_high
-* year_low
-* year_high
-* holdings_gain_percent
-* annualized_gain
-* holdings_gain
-* holdings_gain_percent_realtime
-* holdings_gain_realtime
-* more_info
-* order_book_realtime
-* market_capitalization
-* market_cap_realtime
-* ebitda
-* change_from_year_low
-* percent_change_from_year_low
-* last_trade_realtime_with_time
-* change_percent_realtime
-* change_from_year_high
-* percebt_change_from_year_high
-* last_trade_with_time
-* last_trade_price_only
-* high_limit
-* low_limit
-* days_range
-* days_range_realtime
-* fiftyday_moving_average
-* two_hundredday_moving_average
-* change_from_two_hundredday_moving_average
-* percent_change_from_two_hundredday_moving_average
-* change_from_fiftyday_moving_average
-* percent_change_from_fiftyday_moving_average
-* name
-* notes
-* open
-* previous_close
-* price_paid
-* changein_percent
-* price_sales
-* price_book
-* ex_dividend_date
-* pe_ratio
-* dividend_pay_date
-* pe_ratio_realtime
-* peg_ratio
-* price_eps_estimate_current_year
-* price_eps_estimate_next_year
-* symbol
-* shares_owned
-* short_ratio
-* last_trade_time
-* ticker_trend
-* oneyr_target_price
-* volume
-* holdings_value
-* holdings_value_realtime
-* year_range
-* days_value_change
-* days_value_change_realtime
-* stock_exchange
-* dividend_yield
-* percent_change",
+Each stock object has the following values:
 
-### StockQuote::Stock.history(symbol, start_date, end_date)
+`Symbol, Ask, AverageDailyVolume, Bid, AskRealtime, BidRealtime, BookValue, Change_PercentChange, Change, Commission, ChangeRealtime, AfterHoursChangeRealtime, DividendShare, LastTradeDate, TradeDate, EarningsShare, ErrorIndicationreturnedforsymbolchangedinvalid, EPSEstimateCurrentYear, EPSEstimateNextYear, EPSEstimateNextQuarter, DaysLow, DaysHigh, YearLow, YearHigh, HoldingsGainPercent, AnnualizedGain, HoldingsGain, HoldingsGainPercentRealtime, HoldingsGainRealtime, MoreInfo, OrderBookRealtime, MarketCapitalization, MarketCapRealtime, EBITDA, ChangeFromYearLow, PercentChangeFromYearLow, LastTradeRealtimeWithTime, ChangePercentRealtime, ChangeFromYearHigh, PercebtChangeFromYearHigh, LastTradeWithTime, LastTradePriceOnly, HighLimit, LowLimit, DaysRange, DaysRangeRealtime, FiftydayMovingAverage, TwoHundreddayMovingAverage, ChangeFromTwoHundreddayMovingAverage, PercentChangeFromTwoHundreddayMovingAverage, ChangeFromFiftydayMovingAverage, PercentChangeFromFiftydayMovingAverage, Name, Notes, Open, PreviousClose, PricePaid, ChangeinPercent, PriceSales, PriceBook, ExDividendDate, PERatio, DividendPayDate, PERatioRealtime, PEGRatio, PriceEPSEstimateCurrentYear, PriceEPSEstimateNextYear, Symbol, SharesOwned, ShortRatio, LastTradeTime, TickerTrend, OneyrTargetPrice, Volume, HoldingsValue, HoldingsValueRealtime, YearRange, DaysValueChange, DaysValueChangeRealtime, StockExchange, DividendYield, PercentChange, ErrorIndicationreturnedforsymbolchangedinvalid, Date, Open, High, Low, Close, AdjClose`
 
-StockQuote::Stock.history(symbol, start_date, end_date) is as alias to StockQuote::Stock.quote(symbol, start_date, end_date).
 
-If you pass quote a start_date and end_date it will do a historical query within the date range as opposed to a realtime quote.  Only one stock symbol should be used for historical quotes.
+### Date Range
+
+If you pass quote a start_date and end_date it will do a historical query within the date range as opposed to a realtime quote.  Only one stock symbol should be used for historical quotes
 
 Historical queries provide an array of Price objects with the following values:
 
-* symbol
-* date
-* open
-* high
-* low
-* close
-* volume
+`Symbol, Date, Open, High, How, Close, Volume`
 
-## Values
+A alias is also available:  StockQuote::Stock.history(symbol, start_date, end_date)
 
-Values may be accessed off the Stock or Price object like so:
+### Field Selection
 
-`StockQuote::Stock.quote("SYMBOL").last`
+By supplying a select parameter you may query only specific fields. Supplying nil as the start_date and end_date will return the last market quote.  The select parameter can either by a comma separated string of field names, or an array of field names.
 
-Or:
+For example, to query the Symbol, Ask and Bid for AAPL:
 
-`stock = StockQuote::Stock.quote("SYMBOL")`
+`stocks = StockQuote::Stock.quote('aapl', nil, nil, ['Symbol, 'Ask', 'Bid'])`
 
-`stock.last`
+You may also query multiple symbols:
 
-You can always convert the queries results to json with the following commands:
+`stocks = StockQuote::Stock.quote(['aapl', 'tsla'], nil, nil, ['Symbol, 'Ask', 'Bid'])`
 
-`StockQuote::Stock.quote("SYMBOL").to_json`
+### Format
 
-Or:
+If you prefer raw json as opposed to Stock instances, you may use the following convenience methods:
 
-`StockQuote::Stock.history("SYMBOL").to_json`
+`stocks = StockQuote::Stock.json_quote('aapl')`
+
+`stocks = StockQuote::Stock.json_history('aapl')`
+
+All other options are also available.
 
 
 ## Response Codes
@@ -189,6 +108,8 @@ In the event that a stock symbol is incorrect, the returned instance will provid
       => 404
     > @stock.failure?
       => true
+
+Response codes and success failure methods are not available with json responses.
 
 ## Special thanks to
 
