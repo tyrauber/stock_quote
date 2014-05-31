@@ -165,6 +165,15 @@ describe StockQuote::Stock do
         )
         expect(simple_return).to eq(2.205578386790845)
       end
+
+      it 'should return 0 if only one price is found' do
+        simple_return = StockQuote::Stock.simple_return(
+          'TSTA',
+          Date.parse('20130201'),
+          Date.parse('20130501')
+        )
+        expect(simple_return).to eq(0)
+      end
     end
 
     context 'failure' do
