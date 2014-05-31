@@ -85,12 +85,17 @@ module StockQuote
 
       quotes = []
       begin
-        quotes += quote(
+        year_quotes = quote(
           symbol,
           start,
           min_date(finish, start + 365),
           "Close"
         )
+        if year_quotes.is_a?(Array)
+          quotes += year_quotes
+        else
+          return 0
+        end
         start += 365
       end until finish - start < 365
       quotes
