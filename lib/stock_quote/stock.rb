@@ -85,9 +85,9 @@ module StockQuote
 
     def self.format_select(select)
       return select if select.is_a?(String) && !!('*'.match(/\*/))
-      select = select.split(",") if select.is_a?(String)
+      select = select.split(',') if select.is_a?(String)
       select = select.reject{ |e| !(FIELDS.include? e) }
-      return select.length > 0 ? select.join(',') : '*'
+      select.length > 0 ? select.join(',') : '*'
     end
 
     def self.simple_return(symbol, start_date = Date.parse('2012-01-01'), end_date = Date.today)
@@ -100,7 +100,7 @@ module StockQuote
           symbol,
           start,
           min_date(finish, start + 365),
-          "Close"
+          'Close'
         )
         if year_quotes.is_a?(Array)
           quotes += year_quotes
@@ -141,7 +141,7 @@ module StockQuote
       quotes = []
       begin
         quote = quote(symbol, start, min_date(finish, start + 365), select, format)
-        quotes += !!(format=='json') ? quote['quote'] : quote
+        quotes += !!(format=='json') ? quote['quote'] : Array(quote)
         start += 365
       end until finish - start < 365
       return !!(format=='json') ? { 'quote' => quotes } : quotes
