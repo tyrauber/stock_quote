@@ -84,6 +84,15 @@ describe StockQuote::Stock do
         @stock = StockQuote::Stock.history('aapl')
         expect(@stock.count).to be >= 1
       end
+
+      it 'succesfuly queries history by default (no start date given' do
+        @stock = StockQuote::Stock.history(
+          'aapl',
+          Date.parse('20130103'),
+          Date.parse('20130103')
+        )
+        expect(@stock.count).to be == 1
+      end
     end
 
     context 'failure' do
