@@ -10,6 +10,10 @@ describe 'Date() kernel function' do
     expect(to_date('2012-01-01')).to eq(Date.parse('2012-01-01'))
   end
 
+  it 'will convert title cased words to underscored words' do
+    expect(to_underscore('AdjClose')).to eq('adj_close')
+  end
+
   it 'will raise an invalid Date error if it cannot convert arg into date' do
     expect do
       to_date('abcd').to eq(Date.parse('2012-01-01'))
