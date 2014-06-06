@@ -12,7 +12,7 @@ module StockQuote
     end
 
     def to_underscore(string)
-      string.gsub!(/::/, '/')
+      string = string.gsub(/::/, '/')
       string.gsub!(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
       string.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
       string.tr!('-', '_')
