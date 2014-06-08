@@ -9,7 +9,7 @@ module StockQuote
   # Is returned for 404s and ErrorIndicationreturnedforsymbolchangedinvalid
   class NoDataForStockError < StandardError
     attr_reader :no_data_message
-    def initialize(data, *)
+    def initialize(data = {}, *)
       if data['ErrorIndicationreturnedforsymbolchangedinvalid']
         @no_data_message = data['ErrorIndicationreturnedforsymbolchangedinvalid']
       elsif data['diagnostics'] && data['diagnostics']['warning']
@@ -75,8 +75,15 @@ module StockQuote
         url += URI.encode("SELECT #{ select } FROM yahoo.finance.quotes WHERE symbol IN (#{to_p(symbol)})")
       end
       url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
-      response = RestClient.get(url)
-      parse(response, symbol, format)
+
+      RestClient.get(url) do |response|
+        if response.code == 200
+          parse(response, symbol, format)
+        else
+          warn "[BAD REQUEST] #{ url }"
+          NoDataForStockError.new
+        end
+      end
     end
 
     def self.json_quote(symbol, start_date = nil, end_date = nil, select = '*', format = 'json')

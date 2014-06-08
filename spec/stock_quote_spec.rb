@@ -67,11 +67,17 @@ describe StockQuote::Stock do
 
       use_vcr_cassette 'asdf'
 
-      it 'should fail... gracefully' do
+      it 'should fail... gracefully if no data is found for that ticker' do
         @stock = StockQuote::Stock.quote('asdf')
         @stock.response_code.should be_eql(404)
         @stock.should respond_to(:no_data_message)
         @stock.no_data_message.should_not be_nil
+      end
+
+      it 'should fail... gracefully if the request errors out' do
+        stock = StockQuote::Stock.quote('\/')
+        expect(stock.response_code).to eql(404)
+        expect(stock).to be_instance_of(StockQuote::NoDataForStockError)
       end
     end
   end
