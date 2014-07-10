@@ -151,10 +151,11 @@ module StockQuote
         begin
           quote = quote(symbol, start, min_date(finish, start + 365), select, format)
           quotes += !!(format=='json') ? quote['quote'] : Array(quote)
+          start += 365
         rescue NoDataForStockError => inner_error
+          start += 365
           return inner_error if finish - start < 0
         end
-        start += 365
       end until finish - start < 0
 
       return !!(format=='json') ? { 'quote' => quotes } : quotes
