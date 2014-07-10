@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rest-client'
 require 'json'
 require 'date'
+
 include StockQuote::Utility
 
 module StockQuote
@@ -147,14 +148,16 @@ module StockQuote
 
       quotes = []
       begin
-        quote = quote(symbol, start, min_date(finish, start + 365), select, format)
-        quotes += !!(format=='json') ? quote['quote'] : Array(quote)
+        begin
+          quote = quote(symbol, start, min_date(finish, start + 365), select, format)
+          quotes += !!(format=='json') ? quote['quote'] : Array(quote)
+        rescue NoDataForStockError => inner_error
+          return inner_error if finish - start < 0
+        end
         start += 365
-      end until finish - start < 365
-      return !!(format=='json') ? { 'quote' => quotes } : quotes
+      end until finish - start < 0
 
-    rescue NoDataForStockError => e
-      return e
+      return !!(format=='json') ? { 'quote' => quotes } : quotes
     end
 
     def self.json_history(symbol, start_date = '2012-01-01', end_date = Date.today, select = '*', format = 'json')
