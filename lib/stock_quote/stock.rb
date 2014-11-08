@@ -75,8 +75,7 @@ module StockQuote
         url += URI.encode("SELECT #{ select } FROM yahoo.finance.quotes WHERE symbol IN (#{to_p(symbol)})")
       end
       url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
-
-      RestClient.get(url) do |response|
+      RestClient::Request.execute(:url => url, :method => :get, :verify_ssl => false) do |response|
         if response.code == 200
           parse(response, symbol, format)
         else
