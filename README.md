@@ -8,6 +8,8 @@ On November 1, 2013, Google discontinued iGoogle, which contained the api endpoi
 
 As of November 2nd, 2013, the stock_quote gem has been rebuilt to use the Yahoo finance api, starting with version 1.1.0.  All applications leveraging this gem should update to 1.1.0 to resume operation. The gem methods are the same, but responses have been modified to leverage the new api.  Documentation has been updated to reflect these changes.
 
+On November 7th, 2014, some users reported sporadic SSL issues with yahoo preventing the gem from making successful queries. These issues were solved in version 1.2.0 by choosing to not verify yahoo's SSL certificate. If you experience issues with Yahoo's incorrect SSL certificate, with versions 1.1.8 or below, please update the gem.
+
 ## Installation
 
 To install the 'stock_quote' ruby gem:
