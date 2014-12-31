@@ -32,6 +32,7 @@ module StockQuote
 
     FIELDS.each do |field|
       __send__(:attr_accessor, to_underscore(field).to_sym)
+      __send__(:alias_method, field.to_sym, to_underscore(field).to_sym)
     end
 
     def self.fields

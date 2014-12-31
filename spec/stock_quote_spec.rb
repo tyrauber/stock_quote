@@ -11,15 +11,21 @@ describe StockQuote::Stock do
         use_vcr_cassette 'aapl'
 
         @fields.each do |field|
-          it ".#{field}" do
+          it ".#{to_underscore(field)}" do
             @stock = StockQuote::Stock.quote('aapl')
             @stock.should respond_to(to_underscore(field).to_sym)
+          end
+
+          it ".#{field}" do
+            @stock = StockQuote::Stock.quote('aapl')
+            @stock.should respond_to(field.to_sym)
           end
         end
 
         it 'should use underscore getter method for the underscore instance variable' do
           @stock = StockQuote::Stock.new({ 'AdjClose' => 123 })
           expect(@stock.adj_close).to eq(123)
+          expect(@stock.AdjClose).to eq(123)
         end
 
         it 'should result in a successful query with ' do
