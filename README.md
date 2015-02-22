@@ -1,6 +1,6 @@
 # stock_quote
 
-A ruby gem that retrieves real-time stock quotes and historical pricing from ~~google~~ yahoo.
+A ruby gem that retrieves stock quotes and historical pricing from ~~google~~ yahoo.
 
 # Update
 
