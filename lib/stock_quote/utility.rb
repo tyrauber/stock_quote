@@ -1,6 +1,7 @@
+
 require 'date'
 module StockQuote
-  # => StockQuote Uility Methods
+  # => StockQuote Utility Methods
   module Utility
 
     def min_date(first, second)
