@@ -35,6 +35,11 @@ module StockQuote
       __send__(:alias_method, field.to_sym, to_underscore(field).to_sym)
     end
 
+    # Fix spelling yahoo error
+    __send__(:attr_accessor, to_underscore('PercebtChangeFromYearHigh').to_sym)
+    __send__(:alias_method, 'PercentChangeFromYearHigh'.to_sym, to_underscore('PercebtChangeFromYearHigh').to_sym)
+    __send__(:alias_method,  to_underscore('PercentChangeFromYearHigh').to_sym, to_underscore('PercebtChangeFromYearHigh').to_sym)
+
     def self.fields
       FIELDS
     end
