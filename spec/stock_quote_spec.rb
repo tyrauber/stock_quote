@@ -189,7 +189,7 @@ describe StockQuote::Stock do
           Date.parse('2012-01-03'),
           Date.parse('2012-01-20')
         )
-        expect(simple_return).to eq(2.205578386790845)
+        expect(simple_return).to eq(2.2055800890012827)
       end
 
       it 'should return 0 if only one price is found' do
