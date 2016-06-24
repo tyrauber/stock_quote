@@ -20,12 +20,12 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
 
-  s.add_development_dependency 'rspec', '~> 2.14'
-  s.add_development_dependency 'vcr', '~> 2.9'
-  s.add_development_dependency 'webmock', '~> 1.17'
-  s.add_development_dependency 'rubocop', '~> 0.20'
-  s.add_development_dependency 'byebug'
-  s.add_runtime_dependency 'rest-client', '~> 1.6'
+  s.add_development_dependency 'rspec', '~> 3.4'
+  s.add_development_dependency 'vcr', '~> 3.0.1'
+  s.add_development_dependency 'webmock', '~> 1.24.6'
+  s.add_development_dependency 'rubocop', '~> 0.40'
+  s.add_development_dependency 'byebug', '~> 9.0.5'
+  s.add_runtime_dependency 'rest-client', '~> 1.8'
   s.add_runtime_dependency 'json'
 
 end

@@ -4,80 +4,74 @@ require 'spec_helper'
 describe StockQuote::Stock do
   describe 'quote' do
     context 'success' do
-      describe 'single symbol' do
+      describe 'single symbol', vcr: { cassette_name: "aapl"} do
 
         @fields = StockQuote::Stock::FIELDS
-
-        use_vcr_cassette 'aapl'
 
         @fields.each do |field|
           it ".#{to_underscore(field)}" do
             @stock = StockQuote::Stock.quote('aapl')
-            @stock.should respond_to(to_underscore(field).to_sym)
+            expect(@stock).to respond_to(to_underscore(field).to_sym)
           end
 
           it ".#{field}" do
             @stock = StockQuote::Stock.quote('aapl')
-            @stock.should respond_to(field.to_sym)
+            expect(@stock).to respond_to(field.to_sym)
           end
         end
 
         it 'should use underscore getter method for the underscore instance variable' do
-          @stock = StockQuote::Stock.new({ 'AdjClose' => 123 })
+          @stock = StockQuote::Stock.new({ 'Symbol' => 'aapl', 'Open' => '123', 'AdjClose' => 123 })
           expect(@stock.adj_close).to eq(123)
           expect(@stock.AdjClose).to eq(123)
         end
 
         it 'should result in a successful query with ' do
           @stock = StockQuote::Stock.quote('aapl')
-          @stock.response_code.should be_eql(200)
-          @stock.should respond_to(:no_data_message)
-          @stock.no_data_message.should be_nil
+          expect(@stock.response_code).to be_eql(200)
+          expect(@stock).to respond_to(:no_data_message)
+          expect(@stock.no_data_message).to be_nil
         end
 
         describe "should select specific fields" do
           it "as string" do
             @stock = StockQuote::Stock.quote('aapl', nil, nil, 'Symbol,Ask,Bid')
-            @stock.response_code.should be_eql(200)
-            @stock.should respond_to(:no_data_message)
-            @stock.no_data_message.should be_nil
+            expect(@stock.response_code).to be_eql(200)
+            expect(@stock).to respond_to(:no_data_message)
+            expect(@stock.no_data_message).to be_nil
           end
 
           it "as array" do
             @stock = StockQuote::Stock.quote('aapl', nil, nil, ['Symbol','Ask','Bid'])
-            @stock.response_code.should be_eql(200)
-            @stock.should respond_to(:no_data_message)
-            @stock.no_data_message.should be_nil
+            expect(@stock.response_code).to be_eql(200)
+            expect(@stock).to respond_to(:no_data_message)
+            expect(@stock.no_data_message).to be_nil
           end
         end
       end
     end
 
-    describe 'comma seperated symbols' do
-
-      use_vcr_cassette 'aapl,tsla'
+    describe 'comma seperated symbols', vcr: { cassette_name: "aapl,tsla"} do
 
       it 'should result in a successful query' do
         @stocks = StockQuote::Stock.quote('aapl,tsla')
         @stocks.each do |stock|
-          stock.response_code.should be_eql(200)
-          stock.should respond_to(:no_data_message)
-          stock.no_data_message.should be_nil
+          expect(stock.response_code).to be_eql(200)
+          expect(stock).to respond_to(:no_data_message)
+          expect(stock.no_data_message).to be_nil
         end
       end
     end
 
-    context 'failure' do
+    context 'failure', vcr: { cassette_name: "asdf"} do
 
       @fields = StockQuote::Stock::FIELDS
 
-      use_vcr_cassette 'asdf'
-
       it 'should fail... gracefully if no data is found for that ticker' do
         @stock = StockQuote::Stock.quote('asdf')
-        @stock.response_code.should be_eql(404)
-        @stock.should respond_to(:no_data_message)
-        @stock.no_data_message.should_not be_nil
+        expect(@stock.response_code).to be_eql(404)
+        expect(@stock).to respond_to(:no_data_message)
+        expect(@stock.no_data_message).to_not be_nil
       end
 
       it 'should fail... gracefully if the request errors out' do
@@ -89,12 +83,11 @@ describe StockQuote::Stock do
   end
 
   describe 'history' do
-    context 'success' do
-      use_vcr_cassette 'aapl_history'
+    context 'success', vcr: { cassette_name: 'aapl_history'} do
 
       it 'should result in a successful query' do
         @stock = StockQuote::Stock.history('aapl', Date.today - 20)
-        @stock.count.should >= 1
+        expect(@stock.count).to be >= 1
       end
 
       it 'succesfuly queries history by default (no start date given' do
@@ -112,8 +105,7 @@ describe StockQuote::Stock do
       end
     end
 
-    context 'failure' do
-      use_vcr_cassette 'asdf_history'
+    context 'failure', vcr: { cassette_name: 'asdf_history'} do
 
       it 'should not result in a successful query' do
         stock = StockQuote::Stock.history('asdf')
@@ -132,56 +124,50 @@ describe StockQuote::Stock do
 
   describe 'json' do
     context 'success' do
-      describe 'single symbol' do
-
-        use_vcr_cassette 'aapl'
+      describe 'single symbol', vcr: { cassette_name: 'aapl'} do
 
         it "it should return json" do
           @stock = StockQuote::Stock.json_quote('aapl')
-          @stock.is_a?(Hash).should be_true
-          @stock.should include('quote')
+          expect(@stock.is_a?(Hash)).to be(true)
+          expect(@stock).to include('quote')
         end
 
         describe "should select specific fields" do
           it "as string" do
             @stock = StockQuote::Stock.json_quote('aapl', nil, nil, 'Symbol,Ask,Bid')
-            @stock.is_a?(Hash).should be_true
-            @stock.should include('quote')
+            expect(@stock.is_a?(Hash)).to be(true)
+            expect(@stock).to include('quote')
           end
 
           it "as array" do
             @stock = StockQuote::Stock.json_quote('aapl', nil, nil, ['Symbol','Ask','Bid'])
-            @stock.is_a?(Hash).should be_true
-            @stock.should include('quote')
+            expect(@stock.is_a?(Hash)).to be(true)
+            expect(@stock).to include('quote')
           end
         end
       end
 
-      describe 'comma seperated symbols' do
-
-        use_vcr_cassette 'aapl,tsla'
+      describe 'comma seperated symbols', vcr: { cassette_name: 'aapl,tsla'} do
 
         it 'should result in a successful query' do
           @stocks = StockQuote::Stock.json_quote('aapl,tsla')
-          @stocks.is_a?(Hash).should be_true
-          @stocks.should include('quote')
+          expect(@stocks.is_a?(Hash)).to be(true)
+          expect(@stocks).to include('quote')
         end
       end
-      describe 'history' do
-        use_vcr_cassette 'aapl_history'
+      describe 'history', vcr: { cassette_name: 'aapl_history'} do
 
         it 'should result in a successful query' do
           @stock = StockQuote::Stock.json_history('aapl', Date.today - 20)
-          @stock.is_a?(Hash).should be_true
-          @stock.should include('quote')
+          expect(@stock.is_a?(Hash)).to be(true)
+          expect(@stock).to include('quote')
         end
       end
     end
   end
 
   describe 'simple_return' do
-    context 'success' do
-      use_vcr_cassette 'aapl_simple_return'
+    context 'success', vcr: { cassette_name: 'aapl_simple_return'} do
 
       it 'should result in a successful query' do
         simple_return = StockQuote::Stock.simple_return(
@@ -202,8 +188,7 @@ describe StockQuote::Stock do
       end
     end
 
-    context 'failure' do
-      use_vcr_cassette 'asdf_simple_return'
+    context 'failure', vcr: { cassette_name: 'asdf_simple_return'} do
 
       it 'should not result in a successful query' do
         expect do
@@ -212,7 +197,7 @@ describe StockQuote::Stock do
             Date.parse('2012-01-03'),
             Date.parse('2012-01-20')
           )
-        end.to raise_exception
+        end.to raise_error(StockQuote::NoDataForStockError)
       end
 
       it 'should raise ArgumentError if start date is after end date' do

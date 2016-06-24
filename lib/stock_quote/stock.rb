@@ -51,7 +51,7 @@ module StockQuote
       elsif data['diagnostics'] && data['diagnostics']['warning']
         @no_data_message = data['diagnostics']['warning']
         @response_code = 404
-      elsif data['count'] && data['count'] == 0
+      elsif data.delete_if { |k, v| v.nil? || k.downcase == 'symbol' }.keys.length == 0
         @no_data_message = 'Query returns no valid data'
         @response_code = 404
       else
