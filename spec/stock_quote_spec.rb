@@ -22,6 +22,7 @@ describe StockQuote::Stock do
 
         it 'should use underscore getter method for the underscore instance variable' do
           @stock = StockQuote::Stock.new({ 'Symbol' => 'aapl', 'Open' => '123', 'AdjClose' => 123 })
+          expect(@stock.symbol.length).to eq(4)
           expect(@stock.adj_close).to eq(123)
           expect(@stock.AdjClose).to eq(123)
         end
@@ -29,6 +30,7 @@ describe StockQuote::Stock do
         it 'should result in a successful query with ' do
           @stock = StockQuote::Stock.quote('aapl')
           expect(@stock.response_code).to be_eql(200)
+          expect(@stock.symbol.length).to eq(4)
           expect(@stock).to respond_to(:no_data_message)
           expect(@stock.no_data_message).to be_nil
         end
@@ -37,6 +39,7 @@ describe StockQuote::Stock do
           it "as string" do
             @stock = StockQuote::Stock.quote('aapl', nil, nil, 'Symbol,Ask,Bid')
             expect(@stock.response_code).to be_eql(200)
+            expect(@stock.symbol.length).to eq(4)
             expect(@stock).to respond_to(:no_data_message)
             expect(@stock.no_data_message).to be_nil
           end
@@ -44,6 +47,7 @@ describe StockQuote::Stock do
           it "as array" do
             @stock = StockQuote::Stock.quote('aapl', nil, nil, ['Symbol','Ask','Bid'])
             expect(@stock.response_code).to be_eql(200)
+            expect(@stock.symbol.length).to eq(4)
             expect(@stock).to respond_to(:no_data_message)
             expect(@stock.no_data_message).to be_nil
           end
@@ -56,6 +60,17 @@ describe StockQuote::Stock do
       it 'should result in a successful query' do
         @stocks = StockQuote::Stock.quote('aapl,tsla')
         @stocks.each do |stock|
+          expect(stock.response_code).to be_eql(200)
+          expect(stock.symbol.length).to eq(4)
+          expect(stock).to respond_to(:no_data_message)
+          expect(stock.no_data_message).to be_nil
+        end
+      end
+
+      it 'should return symbol' do
+        @stocks = StockQuote::Stock.quote('aapl,tsla',nil, nil, ['Symbol', 'LastTradePriceOnly'])
+        @stocks.each do |stock|
+          expect(stock.symbol.length).to eq(4)
           expect(stock.response_code).to be_eql(200)
           expect(stock).to respond_to(:no_data_message)
           expect(stock.no_data_message).to be_nil

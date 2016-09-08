@@ -137,7 +137,7 @@ module StockQuote
       data = json['results']['quote']
       data = count == 1 ? [data] : data
       data.each do |d|
-        d['symbol'] = to_p(symbol) unless d['symbol']
+        d['symbol'] = to_p(symbol) unless d['Symbol']
         stock = Stock.new(d)
         return stock if count == 1
         results << stock
