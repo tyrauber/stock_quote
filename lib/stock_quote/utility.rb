@@ -36,9 +36,9 @@ module StockQuote
     end
 
     def to_date(string)
-      if string.is_a?(String) && string.match(/\d{4}-\d{2}-\d{2}/)
+      if string.is_a?(String) && string.match(/^\d{4}-\d{2}-\d{2}$/)
         Date.strptime(string, '%Y-%m-%d')
-      elsif string.is_a?(String) && string.match(/\d{2}\/\d{2}\/\d{4}/)
+      elsif string.is_a?(String) && string.match(/^\d{2}\/\d{2}\/\d{4}$/)
         Date.strptime(string, '%m/%d/%Y')
       else
         string
