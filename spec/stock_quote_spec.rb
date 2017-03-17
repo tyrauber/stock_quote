@@ -27,7 +27,7 @@ describe StockQuote::Stock do
           expect(@stock.AdjClose).to eq(123)
         end
 
-        it 'should result in a successful query with ' do
+        it 'should result in a successful query with symbol' do
           @stock = StockQuote::Stock.quote('aapl')
           expect(@stock.response_code).to be_eql(200)
           expect(@stock.symbol.length).to eq(4)
