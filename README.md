@@ -64,7 +64,7 @@ If you pass quote a start_date and end_date it will do a historical query within
 
 Historical queries provide an array of Price objects with the following values:
 
-`Symbol, Date, Open, High, How, Close, Volume`
+`Symbol, Date, Open, High, Low, Close, Volume`
 
 A alias is also available:  StockQuote::Stock.history(symbol, start_date, end_date)
 
