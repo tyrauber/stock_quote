@@ -74,11 +74,11 @@ By supplying a select parameter you may query only specific fields. Supplying ni
 
 For example, to query the Symbol, Ask and Bid for AAPL:
 
-`stocks = StockQuote::Stock.quote('aapl', nil, nil, ['Symbol, 'Ask', 'Bid'])`
+`stocks = StockQuote::Stock.quote('aapl', nil, nil, ['Symbol', 'Ask', 'Bid'])`
 
 You may also query multiple symbols:
 
-`stocks = StockQuote::Stock.quote(['aapl', 'tsla'], nil, nil, ['Symbol, 'Ask', 'Bid'])`
+`stocks = StockQuote::Stock.quote(['aapl', 'tsla'], nil, nil, ['Symbol', 'Ask', 'Bid'])`
 
 ### Format
 
