@@ -25,7 +25,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'webmock', '~> 1.24.6'
   s.add_development_dependency 'rubocop', '~> 0.40'
   s.add_development_dependency 'byebug', '~> 9.0.5'
-  s.add_runtime_dependency 'rest-client', '~> 1.8'
+  s.add_development_dependency 'pry', '   ~> 0.10.4'
+  s.add_runtime_dependency 'rest-client', '~> 2.0.2'
   s.add_runtime_dependency 'json'
 
 end
