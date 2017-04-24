@@ -2,10 +2,10 @@ require 'stock_quote/symbol'
 require 'stock_quote/utility'
 require 'spec_helper'
 
-describe StockQuote::Symbol  do
+describe StockQuote::Symbol do
   describe 'symbol_lookup' do
     context 'success' do
-      describe 'apple company', vcr: { cassette_name: 'apple_lookup'} do
+      describe 'apple company', vcr: { cassette_name: 'apple_lookup' } do
         @fields = StockQuote::Symbol::FIELDS
 
         @fields.each do |field|
@@ -23,7 +23,8 @@ describe StockQuote::Symbol  do
         it 'returns sucessful result for query with company name' do
           symbols = StockQuote::Symbol.symbol_lookup('apple')
           expect(symbols.count).to eq(10)
-          expect(symbols.map(&:exch).uniq.sort).to eq(["EBS", "FRA", "GER", "LSE", "NAS", "NYQ", "PNK", "SHH"])
+          expect(symbols.map(&:symbol)).to include('AAPL')
+          expect(symbols.map(&:exch)).to include('NYQ')
         end
 
         it 'returns only symbols for specified exchanges' do
@@ -46,7 +47,7 @@ describe StockQuote::Symbol  do
     end # context 'success'
 
     context 'failure' do
-      describe 'fake company', vcr: { cassette_name: 'fake_company_lookup'} do
+      describe 'fake company', vcr: { cassette_name: 'fake_company_lookup' } do
         it 'returns empty set for query with invalid company name' do
           symbols = StockQuote::Symbol.symbol_lookup('XYZ123')
           expect(symbols).to be_empty

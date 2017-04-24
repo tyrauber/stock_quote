@@ -7,7 +7,7 @@ module StockQuote
   class NoDataForCompanyError < StandardError; end
 
   class Symbol
-    FIELDS = %w(symbol name exch type exchDisp typeDisp)
+    FIELDS = %w[symbol name exch type exchDisp typeDisp].freeze
 
     FIELDS.each do |field|
       __send__(:attr_accessor, to_underscore(field).to_sym)
@@ -27,11 +27,11 @@ module StockQuote
     def self.symbol_lookup(company, exchanges = [])
       return [] if !company || company.strip.empty?
       url = "http://autoc.finance.yahoo.com/autoc?query=#{company}&region=US&lang=en-GB"
-      RestClient::Request.execute(:url => url, :method => :get, :verify_ssl => false) do |response|
+      RestClient::Request.execute(url: url, method: :get, verify_ssl: false) do |response|
         if response.code == 200
           parse(response, exchanges)
         else
-          raise NoDataForCompanyError.new("Problem with company lookup. response: #{response.inspect}")
+          raise(NoDataForCompanyError, "Problem with company lookup. response: #{response.inspect}")
         end
       end
     end
@@ -43,7 +43,7 @@ module StockQuote
       json['Result'].each do |symbol_data|
         results << Symbol.new(symbol_data)
       end
-      exchanges.empty? ? results : results.select{|symbol| exchanges.include?(symbol.exch) }
+      exchanges.empty? ? results : results.select { |symbol| exchanges.include?(symbol.exch) }
     end
   end
 end
