@@ -24,7 +24,7 @@ module StockQuote
       end
     end
 
-    def self.symbol_lookup(company, exchanges = [])
+    def self.lookup(company, exchanges = [])
       return [] if !company || company.strip.empty?
       url = "http://autoc.finance.yahoo.com/autoc?query=#{company}&region=US&lang=en-GB"
       RestClient::Request.execute(url: url, method: :get, verify_ssl: false) do |response|

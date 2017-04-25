@@ -3,32 +3,32 @@ require 'stock_quote/utility'
 require 'spec_helper'
 
 describe StockQuote::Symbol do
-  describe 'symbol_lookup' do
+  describe 'lookup' do
     context 'success' do
       describe 'apple company', vcr: { cassette_name: 'apple_lookup' } do
         @fields = StockQuote::Symbol::FIELDS
 
         @fields.each do |field|
           it ".#{to_underscore(field)}" do
-            symbol = StockQuote::Symbol.symbol_lookup('apple').first
+            symbol = StockQuote::Symbol.lookup('apple').first
             expect(symbol).to respond_to(to_underscore(field).to_sym)
           end
 
           it ".#{field}" do
-            symbol = StockQuote::Symbol.symbol_lookup('apple').first
+            symbol = StockQuote::Symbol.lookup('apple').first
             expect(symbol).to respond_to(field.to_sym)
           end
         end
 
         it 'returns sucessful result for query with company name' do
-          symbols = StockQuote::Symbol.symbol_lookup('apple')
+          symbols = StockQuote::Symbol.lookup('apple')
           expect(symbols.count).to eq(10)
           expect(symbols.map(&:symbol)).to include('AAPL')
           expect(symbols.map(&:exch)).to include('NYQ')
         end
 
         it 'returns only symbols for specified exchanges' do
-          symbols = StockQuote::Symbol.symbol_lookup('apple', ['NYQ'])
+          symbols = StockQuote::Symbol.lookup('apple', ['NYQ'])
           expect(symbols.count).to eq(1)
           symbol = symbols.first
           expect(symbol.name).to eq('Apple Hospitality REIT, Inc.')
@@ -40,7 +40,7 @@ describe StockQuote::Symbol do
         end
 
         it 'does not return any symbols for fake exchange' do
-          symbols = StockQuote::Symbol.symbol_lookup('apple', ['AAAA'])
+          symbols = StockQuote::Symbol.lookup('apple', ['AAAA'])
           expect(symbols.count).to eq(0)
         end
       end
@@ -49,10 +49,10 @@ describe StockQuote::Symbol do
     context 'failure' do
       describe 'fake company', vcr: { cassette_name: 'fake_company_lookup' } do
         it 'returns empty set for query with invalid company name' do
-          symbols = StockQuote::Symbol.symbol_lookup('XYZ123')
+          symbols = StockQuote::Symbol.lookup('XYZ123')
           expect(symbols).to be_empty
         end
       end
     end
-  end # describe 'symbol_lookup'
+  end # describe 'lookup'
 end # describe StockQuote::Symbol

@@ -68,6 +68,20 @@ Historical queries provide an array of Price objects with the following values:
 
 A alias is also available:  StockQuote::Stock.history(symbol, start_date, end_date)
 
+### Symbol Lookup
+
+StockQuote (version 1.3.0) now provides the ability to lookup a stock symbol by company name.
+
+`symbols = StockQuote::Symbol.lookup('apple')`
+
+Or limited to specific exchange:
+
+`symbols = StockQuote::Symbol.lookup('apple', ['NYQ'])`
+
+Symbol lookup returns the following attributes:
+
+`symbol, name, exch, type, exchDisp, typeDisp`
+
 ### Field Selection
 
 By supplying a select parameter you may query only specific fields. Supplying nil as the start_date and end_date will return the last market quote.  The select parameter can either by a comma separated string of field names, or an array of field names.
