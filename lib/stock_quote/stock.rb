@@ -147,19 +147,7 @@ module StockQuote
     end
 
     def self.history(symbol, start_date = '2012-01-01', end_date = Date.today, select = '*', format = 'instance')
-      start, finish = to_date(start_date), to_date(end_date)
-      raise ArgumentError.new('start dt after end dt') if start > finish
-
-      quotes = []
-      begin
-        quote = quote(symbol, start, min_date(finish, start + 365), select, format)
-        quotes += !!(format=='json') ? quote['quote'] : Array(quote)
-        start += 365
-      end until finish - start < 365
-      return !!(format=='json') ? { 'quote' => quotes } : quotes
-
-    rescue NoDataForStockError => e
-      return e
+      raise(ApiChange, "Yahoo discontinued the historical quote API on May 17th, 2017.")
     end
 
     def self.json_history(symbol, start_date = '2012-01-01', end_date = Date.today, select = '*', format = 'json')

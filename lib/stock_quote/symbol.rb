@@ -5,6 +5,7 @@ include StockQuote::Utility
 
 module StockQuote
   class NoDataForCompanyError < StandardError; end
+  class ApiChange < StandardError; end
 
   class Symbol
     FIELDS = %w[symbol name exch type exchDisp typeDisp].freeze

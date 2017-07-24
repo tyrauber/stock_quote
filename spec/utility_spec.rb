@@ -17,7 +17,7 @@ describe 'Date() kernel function' do
   it 'will raise an invalid Date error if it cannot convert arg into date' do
     expect do
       to_date('abcd').to eq(Date.parse('2012-01-01'))
-    end.to raise_error
+    end.to raise_error(NoMethodError)
   end
 end
 
