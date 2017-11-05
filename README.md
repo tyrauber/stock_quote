@@ -1,10 +1,16 @@
 # stock_quote
 
-A ruby gem that retrieves stock quotes and historical pricing from ~~google~~ yahoo.
+A ruby gem that retrieves stock quotes and historical pricing from ~~google~~ ~~yahoo~~...
 
 # Update
 
-On May 17th, 2017, Yahoo discontinued portions of the finance API related to historical quotes.
+On November 1st, 2017, Yahoo Finance terminated public access to the API:
+
+`It has come to our attention that this service is being used in violation of the Yahoo Terms of Service.  As such, the service is being discontinued.  For all future markets and equities data research, please refer to finance.yahoo.com.`
+
+As a result, the stock_quote gem ceases to function in it's current state.
+
+Solutions are welcome.
 
 ## Installation
 
@@ -113,10 +119,6 @@ In the event that a stock symbol is incorrect, the returned instance will provid
       => true
 
 Response codes and success failure methods are not available with json responses.
-
-## Special thanks to
-
-...~~Google~~ Yahoo for making this api publicly available.
 
 ## License
 
