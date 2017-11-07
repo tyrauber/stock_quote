@@ -36,7 +36,7 @@ These queries will return a Stock object or an array of Stock objects which you 
 
 Each stock object has the following values:
 
-`id, symbol, index, last_trade_price, last_trade_with_currency, last_trade_time, last_trade_date_time, last_trade_date_time_long, dividend, yield, last_trade_size, change, change_percent, ext_hrs_last_trade_price, ext_hrs_last_trade_with_currency, ext_hrs_last_trade_date_time_long, ext_hrs_change, ext_hrs_change_percent, previous_close_price`
+`symbol, exchange, id, t, e, name, f_reuters_url, f_recent_quarter_date, f_annlyal_date, f_ttm_date, financials, kr_recent_quarter_date, kr_annual_date, kr_ttm_date, c, l, cp, ccol, op, hi, lo, vo, avvo, hi52,  lo52, mc, pe, fwpe, beta, eps, dy, ldiv, shares, instown, eo, sid, sname, iid, iname, related, summary, management, moreresources, events`
 
 Among others.
 

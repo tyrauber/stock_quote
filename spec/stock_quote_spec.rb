@@ -19,9 +19,11 @@ describe StockQuote::Stock do
         expect(@stock).to respond_to(:response_code)
       end
 
-      StockQuote::Stock::FIELDS.each do |k,v|
-        it "should respond to #{v}" do
-          expect(@stock).to respond_to(v)
+      (StockQuote::Stock::FIELDS - %w(f_annlyal_date fwpe eo events)).each do |k|
+        it "should respond to #{k}" do
+          expect(@stock).to respond_to(k)
+          expect(@stock.send(k)).to_not be_nil
+          expect(@stock.send(k).length).to be > 0
         end
       end
     end

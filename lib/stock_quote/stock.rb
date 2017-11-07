@@ -10,38 +10,18 @@ module StockQuote
 
   class Stock
 
-   FIELDS = {
-      id: 'id',
-      t: 'symbol',
-      e: 'index',
-      l: 'last_trade_price',
-      l_cur: 'last_trade_with_currency',
-      ltt: 'last_trade_time',
-      lt_dts: 'last_trade_date_time',
-      lt: 'last_trade_date_time_long',
-      div: 'dividend',
-      yld: 'yield',
-      s: 'last_trade_size',
-      c: 'change',
-      cp: 'change_percent',
-      el: 'ext_hrs_last_trade_price',
-      el_cur: 'ext_hrs_last_trade_with_currency',
-      elt: 'ext_hrs_last_trade_date_time_long',
-      ec: 'ext_hrs_change',
-      ecp: 'ext_hrs_change_percent',
-      pcls_fix: 'previous_close_price'
-    }
-    
-    
-    FIELDS.each do |k,v|
-      __send__(:attr_accessor, v.to_sym)
-      __send__(:alias_method, k, v.to_sym)
+   FIELDS = %w(symbol exchange id t e name f_reuters_url f_recent_quarter_date f_annlyal_date f_ttm_date financials kr_recent_quarter_date kr_annual_date kr_ttm_date c l cp ccol op hi lo vo avvo hi52 lo52 mc pe fwpe beta eps dy ldiv shares instown eo sid sname iid iname related summary management moreresources events)
+
+   FIELDS.each do |k|
+      __send__(:attr_accessor, k.to_sym)
     end
 
     attr_accessor :response_code, :history
 
     def initialize(data={})
-      data.each {|k,v| self.instance_variable_set("@#{k}".to_sym, v)}
+      data.each {|k,v|
+        self.instance_variable_set("@#{k}".to_sym, v)
+      }
       @response_code = 200
     end
 
