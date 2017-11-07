@@ -32,7 +32,7 @@ module StockQuote
       params.merge!(output:  !!(startdate || enddate) ? 'csv' : 'json')
       params.merge!(startdate: startdate) if !!(startdate)
       params.merge!(enddate: enddate) if !!(enddate)
-      symbol.split(/\W/).each do |s|
+      symbol.split(/,/).each do |s|
         params.merge!(q: s)
         u = "#{url}?#{URI.encode_www_form(params)}"
         RestClient::Request.execute(:url => u, :method => :get, :verify_ssl => false) do |response|

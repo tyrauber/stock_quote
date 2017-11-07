@@ -27,8 +27,24 @@ describe StockQuote::Stock do
         end
       end
     end
+    describe 'odd symbols', vcr: { cassette_name: "TE.V"} do
+      it "should find instance of Stock with a period in the symbol" do
+        stock = StockQuote::Stock.quote('TE.V')
+        expect(stock).to be_an_instance_of(StockQuote::Stock)
+        expect(stock.symbol).to eq('TE')
+      end
+      it "should find instance of Stock with a hyphen in the symbol" do
+        stock = StockQuote::Stock.quote('BAC-A')
+        expect(stock).to be_an_instance_of(StockQuote::Stock)
+        expect(stock.symbol).to eq('BACA')
+      end
+      it "should find instance of Stock with a hyphen in the symbol" do
+        @stocks = StockQuote::Stock.quote('TE.V,BAC-A')
+        expect(@stocks.is_a?(Array)).to be(true)
+        expect(@stocks.first).to be_an_instance_of(StockQuote::Stock)
+      end
+    end
     describe 'comma seperated symbols', vcr: { cassette_name: 'aapl,tsla'} do
-
       it 'should result in a successful query' do
         @stocks = StockQuote::Stock.quote('aapl,tsla')
         expect(@stocks.is_a?(Array)).to be(true)
