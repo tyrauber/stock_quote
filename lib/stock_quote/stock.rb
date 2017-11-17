@@ -37,6 +37,7 @@ module StockQuote
         u = "#{url}?#{URI.encode_www_form(params)}"
         RestClient::Request.execute(:url => u, :method => :get, :verify_ssl => false) do |response|
           if !!(startdate || enddate)
+            fail "Invalid Query" if response.body.match(/^<!DOCTYPE html>/)
             csv = CSV.new(response.body[3..-1], :headers => true, :header_converters => :symbol, :converters => :all)
             json = {symbol: s, history: csv.to_a.map {|row| row.to_hash }}
             if format == 'json'
@@ -45,11 +46,14 @@ module StockQuote
               results << Stock.new(json)
             end
           else
-            json = JSON.parse(response.body.gsub(/\n/, "")[3..-1])[0]
-            if format == 'json'
-              results << json
+            json = response.body.gsub(/\n/, "")
+            json = json.match(/\/\/ \[/) ? JSON.parse(json[3..-1])[0] : JSON.parse(json)["searchresults"]
+            if json.is_a?(Array)
+              json.each do |j|
+                results << (format=='json' ? j : Stock.new(j))
+              end
             else
-              results << Stock.new(json)
+              results << (format=='json' ? json : Stock.new(json))
             end
           end
         end

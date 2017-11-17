@@ -27,21 +27,11 @@ describe StockQuote::Stock do
         end
       end
     end
-    describe 'odd symbols', vcr: { cassette_name: "TE.V"} do
-      it "should find instance of Stock with a period in the symbol" do
-        stock = StockQuote::Stock.quote('TE.V')
-        expect(stock).to be_an_instance_of(StockQuote::Stock)
-        expect(stock.symbol).to eq('TE')
-      end
-      it "should find instance of Stock with a hyphen in the symbol" do
-        stock = StockQuote::Stock.quote('BAC-A')
-        expect(stock).to be_an_instance_of(StockQuote::Stock)
-        expect(stock.symbol).to eq('BACA')
-      end
-      it "should find instance of Stock with a hyphen in the symbol" do
-        @stocks = StockQuote::Stock.quote('TE.V,BAC-A')
-        expect(@stocks.is_a?(Array)).to be(true)
-        expect(@stocks.first).to be_an_instance_of(StockQuote::Stock)
+    describe 'search results', vcr: { cassette_name: 'z'} do
+      it "should return array of suggestions is symbol isn't recognized" do
+        stocks = StockQuote::Stock.quote('Z')
+        expect(stocks.is_a?(Array)).to be(true)
+        expect(stocks.first).to be_an_instance_of(StockQuote::Stock)
       end
     end
     describe 'comma seperated symbols', vcr: { cassette_name: 'aapl,tsla'} do
@@ -53,29 +43,27 @@ describe StockQuote::Stock do
     end
   end
   describe 'history', vcr: { cassette_name: "aapl-history"} do
-    before(:all) do
-      VCR.use_cassette("aapl-history") do
-        @stock = StockQuote::Stock.quote('aapl', '01-Jan-2016')
-      end
-    end
 
     it 'should respond_to response_code' do
-      expect(@stock).to respond_to(:response_code)
+      stock = StockQuote::Stock.quote('aapl', '01-Jan-2016')
+      expect(stock).to respond_to(:response_code)
     end
     
     it 'should return json' do
-      @stock = StockQuote::Stock.quote('aapl', '01-Jan-2016', nil, 'json')
-      expect(@stock.is_a?(Hash)).to be(true)
+      stock = StockQuote::Stock.quote('aapl', '01-Jan-2016', nil, 'json')
+      expect(stock.is_a?(Hash)).to be(true)
     end
     
     it 'should return multiple quotes' do
-      @stock = StockQuote::Stock.quote('aapl,tsla', '01-Jan-2016')
-      expect(@stock.first).to respond_to(:response_code)
+      stock = StockQuote::Stock.quote('aapl,tsla', '01-Jan-2016')
+      expect(stock.first).to respond_to(:response_code)
+    end
+    
+    it 'should raise runtime error for invalid query' do
+      expect{ StockQuote::Stock.quote('TE.V', '01-Jan-2016') }.to raise_error(RuntimeError)
     end
     
     describe 'versions of date allowed' do
-      
-      # Wow. Impressive date handling. Nice work, Google.
 
       it '01-Jan-2016' do
         @stock = StockQuote::Stock.quote('aapl', '01-Jan-2016')
