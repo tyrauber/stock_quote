@@ -60,17 +60,17 @@ module StockQuote
       end
       return results.length > 1 ? results : results.shift
     end
-    
-    def self.json_quote(symbol, start_date=nil, end_date=nil, format=nil)
-      self.quote(symbol, start_date, end_date, 'json')
+
+    def self.json_quote(symbol, format='json')
+      self.quote(symbol, nil, nil, format)
     end
-    
-    def self.history(symbol, start_date=nil, end_date=nil, format=nil)
-      self.history(symbol, start_date, end_date, format)
+
+    def self.history(symbol, start_date=nil, end_date=nil, format='json')
+      self.quote(symbol, start_date, end_date, format)
     end
-    
-    def self.json_history(symbol, start_date=nil, end_date=nil, format=nil)
-      self.history(symbol, start_date, end_date, 'json')
+
+    def self.json_history(symbol, start_date=nil, end_date=nil, format='json')
+      self.quote(symbol, start_date, end_date, format)
     end
   end
 end
