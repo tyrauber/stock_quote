@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Ty Rauber']
   s.email       = ['tyrauber@mac.com']
   s.homepage    = 'https://github.com/tyrauber/stock_quote'
-  s.summary     = 'A ruby gem that retrieves real-time stock quotes from google.'
-  s.description = 'Retrieve up to 100 stock quotes per query with the following variables - symbol, pretty_symbol, symbol_lookup_url, company, exchange, exchange_timezone, exchange_utc_offset, exchange_closing, divisor, currency, last, high, low, volume, avg_volume, market_cap, open, y_close, change, perc_change, delay, trade_timestamp, trade_date_utc, trade_time_utc, current_date_utc, current_time_utc, symbol_url, chart_url, disclaimer_url, ecn_url, isld_last, isld_trade_date_utc, isld_trade_time_utc, brut_last, brut_trade_date_utc, brut_trade_time_utc and daylight_savings - per stock.'
+  s.summary     = 'A ruby gem that retrieves real-time stock quotes from IEX.'
+  s.description = 'Retrieve book, chart, company, delayed quote, dividends, earnings, effective spread, financials, threshold securities, short interest, stats, lists, logo, news, OHLC, open/close, peers, previous, price, quote, relevant, splits, timeseries, volume by venue and batch requests through IEX (iextrading.com/developer)'
   s.rubyforge_project = 'stock_quote'
   s.license = 'MIT'
 
