@@ -37,7 +37,7 @@ module StockQuote
 
     def initialize(data={})
       data.each {|k,v|
-        self.class.__send__(:attr_accessor, k.to_sym)
+        self.class.__send__(:attr_accessor, Util.underscore(k).to_sym)
         self.instance_variable_set("@#{Util.underscore(k)}".to_sym, v)
       }
       @attribution = ATTRIBUTION
