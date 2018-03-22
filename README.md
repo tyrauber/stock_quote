@@ -4,7 +4,7 @@ Real-time, stock data and historical pricing. Data provided for free by [IEX](ht
 
 # Update
 
-On March 17, 2018, Google Finance terminated public access to it's API.  As a result, Version 2.0.0 of stock_quote now uses the IEX Trading API (iextrading.com). Although functionally similar, the results, and therefore attributes, had changed. Please update accordingly. 
+On March 17, 2018, Google Finance terminated public access to it's API.  As a result, previous versions of stock_quote ceased to fuuntion. Therefore, Version 2.0.0 of stock_quote now uses the IEX Trading API (iextrading.com). Although some functionalility is similar, the results, and therefore attributes, had changed. Please review the doumentation below and update accordingly. 
 
 ## Installation
 
@@ -16,7 +16,7 @@ To install the 'stock_quote' ruby gem:
 
 To use the gem in your Rails Application, include it in your Gemfile:
 
-`gem "stock_quote"`, github: 'tyrauber/stock_quote', branch: 'iex'
+`gem "stock_quote"`, '~> 2.0.0'
 
 ### StockQuote::Stock.quote(symbol)
 
@@ -68,6 +68,28 @@ V2.0.0 of stock_quote mirrors the IEX API:
 * [splits](https://iextrading.com/developer/docs/#splits)
 * [volume_by_venue](https://iextrading.com/developer/docs/#volume-by-venue)
 
+All these methods are available on StockQuote::Stock.
+
+For example:
+
+```StockQuote::Stock.company('aapl')`
+
+Retrieves company information.
+
+For example:
+
+```StockQuote::Stock.dividends('aapl')`
+
+Retrieves dividend information.
+
+Raw json hash responses are available for any of the methods by pre-fixing the method name with "raw__".
+
+For example:
+
+```StockQuote::Stock.raw_dividends('aapl')`
+
+Retrieves raw dividend information.
+
 ### [batch](https://iextrading.com/developer/docs/#batch-requests)
 
 Batch allows you to batch requests.  All methods in stock_quote use batch under-the-hood.
@@ -105,7 +127,7 @@ IEX for making this api publicly available.
 
 ## License
 
-Copyright (c) 2017 Ty Rauber
+Copyright (c) 2018 Ty Rauber
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

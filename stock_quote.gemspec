@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ['tyrauber@mac.com']
   s.homepage    = 'https://github.com/tyrauber/stock_quote'
   s.summary     = 'A ruby gem that retrieves real-time stock quotes from IEX.'
-  s.description = 'Retrieve book, chart, company, delayed quote, dividends, earnings, effective spread, financials, threshold securities, short interest, stats, lists, logo, news, OHLC, open/close, peers, previous, price, quote, relevant, splits, timeseries, volume by venue and batch requests through IEX (iextrading.com/developer)'
+  s.description = 'Retrieve book, chart, company, delayed quote, dividends, earnings, effective spread, financials, stats, lists, logo, news, OHLC, open/close, peers, previous, price, quote, relevant, splits, timeseries, volume by venue and batch requests through IEX (iextrading.com/developer)'
   s.rubyforge_project = 'stock_quote'
   s.license = 'MIT'
 
