@@ -4,7 +4,7 @@ Real-time, stock data and historical pricing. Data provided for free by [IEX](ht
 
 # Update
 
-On March 17, 2018, Google Finance terminated public access to it's API.  As a result, previous versions of stock_quote ceased to fuuntion. Therefore, Version 2.0.0 of stock_quote now uses the IEX Trading API (iextrading.com). Although some functionalility is similar, the results, and therefore attributes, had changed. Please review the doumentation below and update accordingly. 
+On March 17, 2018, Google Finance terminated public access to it's API.  As a result, previous versions of stock_quote ceased to function. Therefore, Version 2.0.0 of stock_quote now uses the IEX Trading API (iextrading.com). Although some functionality is similar, the results, and therefore attributes, have changed. Please review the documentation below and update accordingly. 
 
 ## Installation
 
@@ -72,13 +72,13 @@ All these methods are available on StockQuote::Stock.
 
 For example:
 
-```StockQuote::Stock.company('aapl')`
+```StockQuote::Stock.company('aapl')```
 
 Retrieves company information.
 
 For example:
 
-```StockQuote::Stock.dividends('aapl')`
+```StockQuote::Stock.dividends('aapl')```
 
 Retrieves dividend information.
 
@@ -86,7 +86,7 @@ Raw json hash responses are available for any of the methods by pre-fixing the m
 
 For example:
 
-```StockQuote::Stock.raw_dividends('aapl')`
+```StockQuote::Stock.raw_dividends('aapl')```
 
 Retrieves raw dividend information.
 
@@ -96,13 +96,13 @@ Batch allows you to batch requests.  All methods in stock_quote use batch under-
 
 Batch follows the syntax:
 
-`StockQuote::Stock.batch(type, symbol, range)`
+```StockQuote::Stock.batch(type, symbol, range)```
 
 Where type can be multiple of the above methods and symbol can be an array of company symbols.
 
 Range can be:
 
-`5y, 2y, 1y, ytd, 6m, 3m, 1m, 1d
+`5y, 2y, 1y, ytd, 6m, 3m, 1m, 1d`
 
 And are applied to chart method.
 
