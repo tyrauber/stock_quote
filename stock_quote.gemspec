@@ -20,9 +20,9 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
 
-  s.add_development_dependency 'rspec', '~> 3.4'
-  s.add_development_dependency 'vcr', '~> 3.0.1'
-  s.add_development_dependency 'webmock', '~> 1.24.6'
+  s.add_development_dependency 'rspec', '~> 3.8'
+  s.add_development_dependency 'vcr', '~> 4.0.0'
+  s.add_development_dependency 'webmock', '~> 3.4.2'
   s.add_runtime_dependency 'rest-client', '~> 2.0.2'
   s.add_runtime_dependency 'json'
 
