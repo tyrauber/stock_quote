@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
 
+  s.add_development_dependency 'bundler', '~> 1.6'
+  s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.8'
   s.add_development_dependency 'vcr', '~> 4.0.0'
   s.add_development_dependency 'webmock', '~> 3.4.2'
