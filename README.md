@@ -1,10 +1,10 @@
 # stock_quote
 
-Real-time, stock data and historical pricing. Data provided for free by [IEX](https://iextrading.com/developer/).
+Real-time, stock data and historical pricing. Data provided by [IEXCLOUD.IO](https://iexcloud.io/). An [API KEY](https://iexcloud.io/cloud-login#/register/) is now required.
 
 # Update
 
-On March 17, 2018, Google Finance terminated public access to it's API.  As a result, previous versions of stock_quote ceased to function. Therefore, Version 2.0.0 of stock_quote now uses the IEX Trading API (iextrading.com). Although some functionality is similar, the results, and therefore attributes, have changed. Please review the documentation below and update accordingly. 
+On June 1, 2019, IEX Group removed all non-IEX data from the IEX Trading API, and migrated all relevant endpoints to IEX Cloud. A free plan is available with a valid API Key. The only change in StockQuote usage is initialization with an API KEY is now required (`StockQuote::Stock.new(api_key: 'YOUR_API_KEY'`).
 
 ## Installation
 
@@ -16,7 +16,16 @@ To install the 'stock_quote' ruby gem:
 
 To use the gem in your Rails Application, include it in your Gemfile:
 
-`gem "stock_quote"`, '~> 2.0.0'
+`gem "stock_quote"`, '~> 3.0.0'
+
+
+## Initialization
+
+To globally initialize StockQuote with a valid API_KEY:
+
+`StockQuote::Stock.new(api_key: YOUR_API_KEY)`
+
+You can also supply api_key as an attribute in any StockQuote::Stock method.
 
 ### StockQuote::Stock.quote(symbol)
 
@@ -46,27 +55,26 @@ The raw_ method is available on all supported methods.
 
 The IEX API is quite extensive and well documented.
 
-V2.0.0 of stock_quote mirrors the IEX API:
+V3.0.0 of stock_quote mirrors the IEXCLOUD.IO API:
 
-* [book](https://iextrading.com/developer/docs/#book)
-* [chart](https://iextrading.com/developer/docs/#chart)
-* [company](https://iextrading.com/developer/docs/#company)
-* [delayed_quote](https://iextrading.com/developer/docs/#delayed-quote)
-* [dividends](https://iextrading.com/developer/docs/#dividends)
-* [earnings](https://iextrading.com/developer/docs/#earnings)
-* [effective_spread](https://iextrading.com/developer/docs/#effective-spread)
-* [financials](https://iextrading.com/developer/docs/#financials)
-* [stats](https://iextrading.com/developer/docs/#key-stats)
-* [logo](https://iextrading.com/developer/docs/#logo)
-* [news](https://iextrading.com/developer/docs/#news)
-* [ohlc](https://iextrading.com/developer/docs/#ohlc)
-* [peers](https://iextrading.com/developer/docs/#peers)
-* [previous](https://iextrading.com/developer/docs/#previous)
-* [price](https://iextrading.com/developer/docs/#price)
-* [quote](https://iextrading.com/developer/docs/#quote)
-* [relevant](https://iextrading.com/developer/docs/#relevant)
-* [splits](https://iextrading.com/developer/docs/#splits)
-* [volume_by_venue](https://iextrading.com/developer/docs/#volume-by-venue)
+* [book](https://iexcloud.io/docs/api/#book)
+* [chart](https://iexcloud.io/docs/api/#historical-prices)
+* [company](https://iexcloud.io/docs/api/#company)
+* [delayed_quote](https://iexcloud.io/docs/api/#delayed-quote)
+* [dividends](https://iexcloud.io/docs/api/#dividends)
+* [earnings](https://iexcloud.io/docs/api/#earnings)
+* [financials](https://iexcloud.io/docs/api/#financials)
+* [stats](https://iexcloud.io/docs/api/#key-stats)
+* [logo](https://iexcloud.io/docs/api/#logo)
+* [news](https://iexcloud.io/docs/api/#news)
+* [ohlc](https://iexcloud.io/docs/api/#ohlc)
+* [peers](https://iexcloud.io/docs/api/#peers)
+* [previous](https://iexcloud.io/docs/api/#previous)
+* [price](https://iexcloud.io/docs/api/#price)
+* [quote](https://iexcloud.io/docs/api/#quote)
+* [relevant](https://iexcloud.io/docs/api/#relevant)
+* [splits](https://iexcloud.io/docs/api/#splits)
+* [volume_by_venue](https://iexcloud.io/docs/api/#volume-by-venue)
 
 All these methods are available on StockQuote::Stock.
 
@@ -106,28 +114,13 @@ Range can be:
 
 And are applied to chart method.
 
-#### TBD
-
-The following IEX methods are currently unsupported:
-
-* [list](https://iextrading.com/developer/docs/#list)
-  * mostactive
-  * gainers
-  * losers
-  * iexvolume
-  * iexvolume
-* [threshold_securities](https://iextrading.com/developer/docs/#iex-regulation-sho-threshold-securities-list)
-* [short_interest](https://iextrading.com/developer/docs/#iex-short-interest-list)
-
-
 ## Special thanks to
 
 IEX for making this api publicly available.
 
-
 ## License
 
-Copyright (c) 2018 Ty Rauber
+Copyright (c) 2019 Ty Rauber
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

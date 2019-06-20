@@ -2,7 +2,11 @@ require 'stock_quote'
 require 'spec_helper'
 
 describe StockQuote::Stock do
-  
+
+  before(:all) do
+    StockQuote::Stock.new(api_key: ENV['API_KEY'])
+  end
+
   StockQuote::Stock::TYPES.each do |key|
     describe key, vcr: { cassette_name: key} do
       let(:range){
