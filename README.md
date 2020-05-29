@@ -4,7 +4,7 @@ Real-time, stock data and historical pricing. Data provided by [IEXCLOUD.IO](htt
 
 # Update
 
-On June 1, 2019, IEX Group removed all non-IEX data from the IEX Trading API, and migrated all relevant endpoints to IEX Cloud. A free plan is available with a valid API Key. The only change in StockQuote usage is initialization with an API KEY is now required (`StockQuote::Stock.new(api_key: 'YOUR_API_KEY'`).
+On June 1, 2019, IEX Group removed all non-IEX data from the IEX Trading API, and migrated all relevant endpoints to IEX Cloud. A free plan is available with a valid API Key. The only change in StockQuote usage is initialization with an API KEY is now required `StockQuote::Stock.new(api_key: 'YOUR_API_KEY'`).
 
 ## Installation
 
