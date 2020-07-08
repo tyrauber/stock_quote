@@ -44,7 +44,7 @@ module StockQuote
       @response_code = !!([{}, nil, ''].include?(data)) ? 500 :  200
     end
 
-    def self.batch_url(types, symbols, range)
+    def self.batch_url(types, symbols, range, params={})
       symbols = symbols.is_a?(Array) ? symbols : symbols.split(",")
       types = types.is_a?(Array) ? types : types.split(",")
       if !(['dividends', 'splits'] & types).empty?
@@ -53,12 +53,16 @@ module StockQuote
       end
       arr = [['token', self.api_key],['symbols', symbols.join(',')], ['types', types.map{|t| t.gsub("_", "-")}.join(',')]]
       arr.push(['range', range]) if !!(range)
+      params.each do |k, v|
+        arr.push([k.to_s, v])
+      end
+
       return "#{URL}market/batch?#{URI.encode_www_form(arr)}"
     end
 
-    def self.batch(type, symbol, range=nil,fmt=false)
+    def self.batch(type, symbol, range=nil,fmt=false, params={})
       raise "Type and symbol required" unless type && symbol
-      url =  batch_url(type, symbol, range)
+      url =  batch_url(type, symbol, range, params)
       return request(url, fmt)
     end
     
