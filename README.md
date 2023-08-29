@@ -4,7 +4,7 @@ Real-time, stock data and historical pricing. Data provided by [IEXCLOUD.IO](htt
 
 # Update
 
-On June 1, 2019, IEX Group removed all non-IEX data from the IEX Trading API, and migrated all relevant endpoints to IEX Cloud. A free plan is available with a valid API Key. The only change in StockQuote usage is initialization with an API KEY is now required `StockQuote::Stock.new(api_key: 'YOUR_API_KEY'`).
+On August 29, 2023, it was reported that ["IEX Cloud Has Changed their Pricing Structure" (#70)](/../../issues/70), and will no longer be allowing free API access. Additionally, the API endpoint this library currently uses will now cost $1500/month to access. Please be aware of [the pricing changes](https://iexcloud.io/pricing) and direct all related inquires to [IEX support](https://iexcloud.io/console/support).
 
 ## Installation
 
@@ -113,10 +113,6 @@ Range can be:
 `5y, 2y, 1y, ytd, 6m, 3m, 1m, 1d`
 
 And are applied to chart method.
-
-## Special thanks to
-
-IEX for making this api publicly available.
 
 ## License
 
